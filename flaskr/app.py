@@ -53,7 +53,7 @@ def signUp():
                                                 ( _name, _hashed_password, _email ) )
         conn.commit()
         session['logged_in'] = True
-        return json.dumps({'message':'usermade'})
+        return json.dumps( {'staus':'success'} )
     else:
         return json.dumps({'html':'<span>Enter the required fields</span>'})
 
@@ -81,6 +81,7 @@ def login():
             # TODO fix so that the returns are better
             if check_password_hash(query_password, _password):
                 session['logged_in'] = True
+                session['user_id'] = data[0][0]
                 return redirect( url_for( 'account') )
             return json.dumps( {'fail': "fail"})
 
@@ -88,13 +89,35 @@ def login():
 @app.route( '/account', methods=['GET'])
 @login_required
 def account():
+    # #get the bets from database
+    # try:
+    #     conn = mysql.connection
+    #     curr = conn.cursor()
+    #     curr.execute("SELECT * FROM bets WHERE user_id = (%d)", ( _user_id ) )
+    #     data = curr.fetchall()
+
+
     return render_template('account.html')
+
+@app.route( '/new-bet', methods=['GET', 'POST'])
+@login_required
+def bet():
+    # TODO fill in information about the bet
+    if request.method=='GET':
+        return render_template( 'new-bet.html')
+    elif request.method=='POST':
+        return render_template( 'new-bet.html')
+
+
+
 
 @app.route( '/logout', methods=['GET'])
 @login_required
 def logout():
     session.clear()
     return redirect( "/" )
+
+
 
 if __name__== "__main__":
     app.run(port=5001)
