@@ -9,10 +9,10 @@ app = Flask(__name__)
  
 # MySQL configurations
  
-app.config['MYSQL_DATABASE_USER'] = 'jschlehr'
+app.config['MYSQL_USER'] = 'jschlehr'
 app.config['MYSQL_PASSWORD'] = 'notr3dam3'
-app.config['MYSQL_DATABASE_DB'] = 'jschlehr'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DB'] = 'jschlehr'
+app.config['MYSQL_HOST'] = 'localhost'
 mysql.init_app(app)
 
 @app.route("/")
@@ -30,14 +30,16 @@ def signUp():
     _email = request.form['inputEmail']
     _password = request.form['inputPassword']
     if _name and _email and _password:
-        curr = mysql.connection.cursor()
+        conn = mysql.connection
+        curr = conn.cursor()
         _hashed_password = generate_password_hash(_password)
-        print(_name, _email, _hashed_password )
-        #curr.execute("INSERT INTO users ")
+        curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
+                                                ( _name, _hashed_password, _email ) )
+        conn.commit()
         return json.dumps({'message':'usermade'})
-
     else:
         return json.dumps({'html':'<span>Enter the required fields</span>'})
+
 
 @app.route('/login')
 def login():
@@ -45,5 +47,5 @@ def login():
 
 
 if __name__== "__main__":
-    app.run()
+    app.run(port=5001)
 
