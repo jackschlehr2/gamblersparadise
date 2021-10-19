@@ -6,14 +6,16 @@
         <title>Gambler's Paradise</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="/flaskr/templates/css/styles.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     </head>
   <body id="override">
     <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <ul class="nav col-12 col-md-auto mb-2 justify-content-left mb-md-0">
-          <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
+          <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
           <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
           <li><a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a></li>
-          <li><a href="/sign-up"><button type="button" class="btn btn-primary">Sign-up</button></a></li>
+          <li><a href="/sign-up-page"><button type="button" class="btn btn-primary">Sign-up</button></a></li>
         </ul>
     </header>
 
@@ -31,9 +33,22 @@
             <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="button">Sign up</button>
         </form>
       </div>
- 
-       
- 
     </div>
   </body>
+  <script>$(function() {
+    $('#btnSignUp').click(function() {
+ 
+        $.ajax({
+            url: '/sign-up',
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+});</script>
 </html>
