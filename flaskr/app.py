@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, json, session
+from flask import Flask, render_template, request, json, session, redirect, url_for
 # import MySQLdb
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+
 
 mysql = MySQL()
 
@@ -15,6 +17,19 @@ app.config['MYSQL_DB'] = 'jschlehr'
 app.config['MYSQL_HOST'] = 'localhost'
 app.secret_key = "supersecretkey321"
 mysql.init_app(app)
+
+
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for( 'login') )
+
+    return wrap
+
 
 @app.route("/")
 def main():
@@ -70,8 +85,16 @@ def login():
             return json.dumps( {'fail': "fail"})
 
 
+@app.route( '/account', methods=['GET'])
+@login_required
+def account():
+    return render_template('account.html')
 
-
+@app.route( '/logout', methods=['GET'])
+@login_required
+def logout():
+    session.clear()
+    return redirect( "/" )
 
 if __name__== "__main__":
     app.run(port=5001)
