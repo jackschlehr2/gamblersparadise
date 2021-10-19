@@ -29,11 +29,11 @@ def signUp():
     _name = request.form['inputName']
     _email = request.form['inputEmail']
     _password = request.form['inputPassword']
-    print(_name, _email, _password )
     if _name and _email and _password:
         curr = mysql.connection.cursor()
         _hashed_password = generate_password_hash(_password)
-        # curr.execute("INSERT INTO users ")
+        print(_name, _email, _hashed_password )
+        #curr.execute("INSERT INTO users ")
         return json.dumps({'message':'usermade'})
 
     else:
