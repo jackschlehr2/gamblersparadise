@@ -1,5 +1,5 @@
 # gamblersparadise
-to turn debug mode on type `export FLASK_ENV=development`
+to turn debug mode on type `export FLASK_ENV=development` <br />
 to run developement server type `python3 app.py`
 
 
