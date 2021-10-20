@@ -1,6 +1,8 @@
 # gamblersparadise
 to turn debug mode on type `export FLASK_ENV=development` <br />
 to activate virtual environment named `env` `source env/bin/activate`
+
+prep virtual environment: `pip install -r flaskr/requirements.txt`
 to exit virtual environment: `deactivate`
 to run developement server type from main directory: `python3 flaskr/app.py`
 
