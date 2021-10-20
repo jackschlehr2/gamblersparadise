@@ -35,6 +35,8 @@
       $("label#game").hide();
       function get_games(league){
         removeGames();
+        $("select#game").hide()
+
         var serializedData = $("select#league").serialize();
         console.log( serializedData );
         $.ajax({
@@ -44,12 +46,11 @@
           success: function( response ){
             
             games = response['success']
-            console.log(games);
             $.each(games, function(i, teams){
               $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + '</option>' );
                 console.log( teams );
               });
-              $("select#game").show()
+            $("select#game").show()
 
           },
           error: function( xhr, status, error ){
