@@ -5,18 +5,61 @@
     <div class="container">
  
       <div class="jumbotron">
-        <h1>Gambler's Paradise</h1>
-        <form class="form-signin" method=POST action="/new-bet">
+        <h1>Submit a new bet</h1>
+        <form class="new-bet" method=POST action="/new-bet">
             <label for="inputBetAmount" class="sr-only">Bet Amount</label>
-                <input name="input" id="inputName" class="form-control" placeholder="Bet Amount" required autofocus>
-            <label for="inputdPassword" class="sr-only">Password</label>
-                <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+                <input type="number" name="inputBetAmount" id="inputBet" class="form-control" placeholder="Bet Amount" required autofocus>
+            <label for="League" >Choose a League</label>
+                <select name="league" id="league" form="new-bet" onchange="get_games(value)">
+                  <option value="NFL">NFL</option>
+                  <option value="NHL">NHL</option>
+                  <option value="NBA">NBA</option>
+                  <option value="NCAAF">NCAAF</option>
+                </select>
+            <label for="Game">Choose a Game</label>
+                <select name="game" id="game">
+                  
+                </select>
             
+        
             <button type=submit id="btnSubmit" class="btn btn-lg btn-primary btn-block" type="button">Submit</button>
         </form>
+
       </div>
  
        
  
     </div>
+    <script>
+      $("#game").hide();
+      $("label#game").hide();
+      function get_games(league){
+        removeGames();
+        var serializedData = $("select#league").serialize();
+        console.log( serializedData );
+        $.ajax({
+          type: "GET",
+          url: "/get-games",
+          data: serializedData,
+          success: function( response ){
+            
+            games = response['success']
+            console.log(games);
+            $.each(games, function(i, teams){
+              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + '</option>' );
+                console.log( teams );
+              });
+              $("select#game").show()
+
+          },
+          error: function( xhr, status, error ){
+            console.log( "request failed " );
+          }
+        });
+      }
+      function removeGames(){
+        const myNode = document.getElementById("game");
+        myNode.innerHTML = '';
+      }
+    </script>
     {% endblock  %}

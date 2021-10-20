@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json, session, redirect, url_for
+from flask import Flask, render_template, request, json, session, redirect, url_for, abort
 # import MySQLdb
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -108,7 +108,24 @@ def bet():
     elif request.method=='POST':
         return render_template( 'new-bet.html')
 
-
+@app.route( '/get-games', methods=['GET'] )
+def get_games():
+    try:
+        print( request.args['league'] )
+        league = request.args['league']
+        conn = mysql.connection
+        curr = conn.cursor()
+        query = "SELECT game_id, home_team_name, away_team_name FROM {league}".format(league=league)  
+        curr.execute(query)
+        data = curr.fetchall()
+        print(data)
+        print( type(data))
+        if not data:
+            abort(500)
+        return {'success':data}
+    except Exception as e: 
+        print(e)
+        abort(500)
 
 
 @app.route( '/logout', methods=['GET'])
