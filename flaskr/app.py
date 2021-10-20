@@ -111,15 +111,11 @@ def bet():
 @app.route( '/get-games', methods=['GET'] )
 def get_games():
     try:
-        print( request.args['league'] )
-        league = request.args['league']
         conn = mysql.connection
         curr = conn.cursor()
-        query = "SELECT game_id, home_team_name, away_team_name FROM {league}".format(league=league)  
+        query = "SELECT game_id, home_team_name, away_team_name FROM {league}".format(league=request.args['league'])  
         curr.execute(query)
         data = curr.fetchall()
-        print(data)
-        print( type(data))
         if not data:
             abort(500)
         return {'success':data}
