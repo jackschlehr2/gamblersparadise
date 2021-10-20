@@ -1,6 +1,6 @@
 # gamblersparadise
 to turn debug mode on type `export FLASK_ENV=development` <br />
-to activate virtual enviornemnt named `env` `source venv/bin/activate`
+to activate virtual enviornemnt named `env` `source env/bin/activate`
 to run developement server type `python3 app.py`
 
 
