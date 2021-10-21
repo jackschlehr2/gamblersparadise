@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, json, session, redirect, url_for, abort
-# import MySQLdb
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -106,7 +105,21 @@ def bet():
     if request.method=='GET':
         return render_template( 'new-bet.html')
     elif request.method=='POST':
-        return render_template( 'new-bet.html')
+        try:
+            # _bet_amonut = request.form['inputName']
+            # _bet_league = request.form['inputEmail']
+            # _game_id = request.form['inputPassword']
+            # if _bet_amonut and _bet_league and _game_id:
+            #     conn = mysql.connection
+            #     curr = conn.cursor()
+            #     curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
+            #                                             ( _name, _hashed_password, _email ) )
+            #     conn.commit()
+            print(request.form)
+            return {'status':'fail'}
+        except Exception as e: 
+            print(e)
+            abort(500) 
 
 @app.route( '/get-games', methods=['GET'] )
 def get_games():
@@ -133,5 +146,5 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001)
+    app.run(port=5000)
 
