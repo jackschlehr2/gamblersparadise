@@ -1,0 +1,21 @@
+{% extends "header.html" %}
+
+{% block body %}
+
+    <div class="container">
+ 
+      <div class="jumbotron">
+        <h1>Delete Account</h1>
+        <form class="delete-account" method=POST action="/delete-account">
+            <label for="inputNewPassword1" class="sr-only">Confirm Password</label>
+                <input type="text" name="newPassword1" id="newPassword1" class="form-control" placeholder="Confirm Password" required autofocus>  
+            <label for="inputNewPassword2" class="sr-only">Confirm Password</label>
+                <input type="text" name="newPassword2" id="newPassword2" class="form-control" placeholder="Confirm Password" required autofocus>  
+            
+                <button type=submit id="btnSubmit" class="btn btn-lg btn-primary btn-block" type="button">Submit</button>
+        </form>
+
+      </div>
+        
+    </div>
+  {% endblock  %}
