@@ -160,7 +160,8 @@ def delete_account():
             curr = conn.cursor()
             curr.execute( delete_query )
             conn.commit()
-            return render_template('index.html', message="Account Deleted")
+            session['logged_in'] = False
+            return redirect( "/" )
         else:
             return render_template('delete_account.html', message="Password Not Correct")
     else:
@@ -216,5 +217,5 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001)
+    app.run(port=5002, host="0.0.0.0")
 
