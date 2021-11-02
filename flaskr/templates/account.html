@@ -1,11 +1,28 @@
 {% extends "header.html" %}
 
 {% block body %}
+<style>
+  h1 {text-align: center;}
+</style>
       <div>
-        Welcome!! ... TODO: display the stats for user
+
         <a href="/new-bet"><button type="button" class="btn btn-outline-primary me-2">New bet</button></a>
         <a href="/change-password"><button type="button" class="btn btn-outline-primary me-2">change password</button></a>
 
+        <header>
+          <h1>Welcome ____!! ... TODO: display the stats for user</h1>
+        </header>
+
       </div>
+      <br>
+      <body>
+        <h6>
+        Wins: <br>  
+        Losses: <br>
+        W/L Percentage: <br>
+        Total Earnings: <br>
+        </h6>
+      </body>
+
 {% endblock  %}
 
