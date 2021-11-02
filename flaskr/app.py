@@ -119,15 +119,15 @@ def change_password():
         data = curr.fetchall()
         current_password = data[0][0]
         if check_password_hash(current_password, old_password_from_form ):
+            new_password_hash = generate_password_hash(new_password2)
+            query = "UPDATE users SET user_password = \"{new_password_hash}\" where user_id = {user_id}".format(new_password_hash=new_password_hash, user_id=_user_id )
+            conn = mysql.connection
+            curr = conn.cursor()
+            curr.execute( query )
+            conn.commit()
+            return render_template('account.html', message="Password Updated")
+        else:
             return render_template('change_password.html', message="Password Not Correct")
-
-        new_password_hash = generate_password_hash(new_password2)
-        query = "UPDATE users SET user_password = \"{new_password_hash}\" where user_id = {user_id}".format(new_password_hash=new_password_hash, user_id=_user_id )
-        conn = mysql.connection
-        curr = conn.cursor()
-        curr.execute( query )
-        conn.commit()
-        return render_template('account.html', message="Password Updated")
     else:
         return {'status':'error'}
 
