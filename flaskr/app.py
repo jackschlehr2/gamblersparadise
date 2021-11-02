@@ -52,6 +52,10 @@ def signUp():
                                                 ( _name, _hashed_password, _email ) )
         conn.commit()
         session['logged_in'] = True
+        session['user_name'] = _name
+        curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
+        data = curr.fetchall()
+        session['user_id'] = data[0][0]
         return json.dumps( {'staus':'success'} )
     else:
         return json.dumps({'html':'<span>Enter the required fields</span>'})
@@ -128,6 +132,37 @@ def change_password():
             return render_template('account.html', message="Password Updated")
         else:
             return render_template('change_password.html', message="Password Not Correct")
+    else:
+        return {'status':'error'}
+
+
+@app.route( '/delete-account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    if request.method=='GET':
+        return render_template('delete_account.html')
+    elif request.method=='POST':
+        new_password1 = request.form['newPassword1']
+        new_password2 = request.form['newPassword2']
+        if new_password1 != new_password2: 
+            return render_template('delete_account.html', message="Passwords Not Same")
+
+        conn = mysql.connection
+        curr = conn.cursor()
+        _user_id = session['user_id']
+        query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
+        curr.execute( query )
+        data = curr.fetchall()
+        current_password = data[0][0]
+        if check_password_hash(current_password, new_password2 ):
+            delete_query = "DELETE from users where user_id = {user_id}".format(user_id=_user_id )
+            conn = mysql.connection
+            curr = conn.cursor()
+            curr.execute( delete_query )
+            conn.commit()
+            return render_template('index.html', message="Account Deleted")
+        else:
+            return render_template('delete_account.html', message="Password Not Correct")
     else:
         return {'status':'error'}
 
