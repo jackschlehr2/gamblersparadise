@@ -81,6 +81,7 @@ def login():
             if check_password_hash(query_password, _password):
                 session['logged_in'] = True
                 session['user_id'] = data[0][0]
+                session['user_name'] = _username
                 return redirect( url_for( 'account') )
             return json.dumps( {'fail': "fail"})
 
@@ -96,7 +97,7 @@ def account():
     #     data = curr.fetchall()
 
 
-    return render_template('account.html')
+    return render_template('account.html', account_name=session['user_name'])
 
 @app.route( '/change-password', methods=['GET', 'POST'])
 @login_required
