@@ -23,6 +23,13 @@
     </ul>
 </header>
 <body id="override">
+  {% if message %}
+    <div>
+      <h1 style="color: blue;">
+        {{message}}
+      </h1>
+    </div>
+  {% endif %}
   {% block body %} {% endblock %}
 </body>
 </html>

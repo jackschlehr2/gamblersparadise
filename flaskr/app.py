@@ -52,6 +52,10 @@ def signUp():
                                                 ( _name, _hashed_password, _email ) )
         conn.commit()
         session['logged_in'] = True
+        session['user_name'] = _name
+        curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
+        data = curr.fetchall()
+        session['user_id'] = data[0][0]
         return json.dumps( {'staus':'success'} )
     else:
         return json.dumps({'html':'<span>Enter the required fields</span>'})
@@ -81,6 +85,7 @@ def login():
             if check_password_hash(query_password, _password):
                 session['logged_in'] = True
                 session['user_id'] = data[0][0]
+                session['user_name'] = _username
                 return redirect( url_for( 'account') )
             return json.dumps( {'fail': "fail"})
 
@@ -96,7 +101,72 @@ def account():
     #     data = curr.fetchall()
 
 
-    return render_template('account.html')
+    return render_template('account.html', account_name=session['user_name'])
+
+@app.route( '/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    if request.method=='GET':
+        return render_template('change_password.html')
+    elif request.method=='POST':
+        old_password_from_form = request.form['oldPassword']
+        new_password1 = request.form['newPassword1']
+        new_password2 = request.form['newPassword2']
+        if new_password1 != new_password2: 
+            return render_template('change_password.html', message="Passwords Not Same")
+
+        conn = mysql.connection
+        curr = conn.cursor()
+        _user_id = session['user_id']
+        query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
+        curr.execute( query )
+        data = curr.fetchall()
+        current_password = data[0][0]
+        if check_password_hash(current_password, old_password_from_form ):
+            new_password_hash = generate_password_hash(new_password2)
+            query = "UPDATE users SET user_password = \"{new_password_hash}\" where user_id = {user_id}".format(new_password_hash=new_password_hash, user_id=_user_id )
+            conn = mysql.connection
+            curr = conn.cursor()
+            curr.execute( query )
+            conn.commit()
+            return render_template('account.html', message="Password Updated")
+        else:
+            return render_template('change_password.html', message="Password Not Correct")
+    else:
+        return {'status':'error'}
+
+
+@app.route( '/delete-account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+    if request.method=='GET':
+        return render_template('delete_account.html')
+    elif request.method=='POST':
+        new_password1 = request.form['newPassword1']
+        new_password2 = request.form['newPassword2']
+        if new_password1 != new_password2: 
+            return render_template('delete_account.html', message="Passwords Not Same")
+
+        conn = mysql.connection
+        curr = conn.cursor()
+        _user_id = session['user_id']
+        query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
+        curr.execute( query )
+        data = curr.fetchall()
+        current_password = data[0][0]
+        if check_password_hash(current_password, new_password2 ):
+            delete_query = "DELETE from users where user_id = {user_id}".format(user_id=_user_id )
+            conn = mysql.connection
+            curr = conn.cursor()
+            curr.execute( delete_query )
+            conn.commit()
+            session['logged_in'] = False
+            return redirect( "/" )
+        else:
+            return render_template('delete_account.html', message="Password Not Correct")
+    else:
+        return {'status':'error'}
+
 
 @app.route( '/new-bet', methods=['GET', 'POST'])
 @login_required
@@ -106,10 +176,11 @@ def bet():
         return render_template( 'new-bet.html')
     elif request.method=='POST':
         try:
-            # _bet_amonut = request.form['inputName']
-            # _bet_league = request.form['inputEmail']
-            # _game_id = request.form['inputPassword']
-            # if _bet_amonut and _bet_league and _game_id:
+
+            _bet_amount = request.form['inputBetAmount']
+            _bet_league = request.form['league']
+            if _bet_amonut and _bet_league and _game_id:
+                pass
             #     conn = mysql.connection
             #     curr = conn.cursor()
             #     curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
@@ -126,7 +197,7 @@ def get_games():
     try:
         conn = mysql.connection
         curr = conn.cursor()
-        query = "SELECT game_id, home_team_name, away_team_name FROM {league}".format(league=request.args['league'])  
+        query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
         curr.execute(query)
         data = curr.fetchall()
         if not data:
@@ -146,5 +217,5 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5000)
+    app.run(port=5002, host="0.0.0.0")
 
