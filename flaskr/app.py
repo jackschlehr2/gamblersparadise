@@ -195,6 +195,7 @@ def bet():
 def get_odds(league):
     try:
         URL = 'https://api.the-odds-api.com/v4/sports/{league}/odds'.format(league=league)
+        print( URL )
         response = requests.get( URL, params = 
             { 'api_key':API_KEY, 
             'markets':'totals',
@@ -220,7 +221,6 @@ def get_games():
     try:
         league = request.args.get("league")
         games = get_odds(league)
-        
         insert_games(league, games )
         conn = mysql.connection
         curr = conn.cursor()
