@@ -193,6 +193,7 @@ def bet():
 
 
 def get_odds(league):
+    print('Making Request')
     try:
         URL = 'https://api.the-odds-api.com/v4/sports/{league}/odds'.format(league=league)
         print( URL )
@@ -206,33 +207,50 @@ def get_odds(league):
     except Exception as e:
         return False
 
-def insert_games( league, games ):
+def insert_games( league, games, bet_type ):
     # conn = mysql.connection
     # curr = conn.cursor()
     # query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
     # curr.execute(query)
+    print("Traversing games")
     for game in games:
-        print( game['id'], game['home_team'], game['away_team'] )
+        id = game['id']
+        home_team = game['home_team']
+        away_team = game['away_team']
+        date = game['commence_time']
+        hours = date[:10]
+        minutes = date[12:-1]
+        date = hours + " " + minutes
+        print( game['id'], game['home_team'], game['away_team'], hours )
         for bookmakers in game['bookmakers']:
-            print(bookmakers)
+            if bookmakers['key'] == 'draftkings':
+                if bet_type == 'OU':
+                    OU = bookmakers['markets'][0]['outcomes'][0]['point']
+                    # print(bookmakers['markets'][0] )
         
-@app.route( '/get-games', methods=['GET'] )
-def get_games():
-    try:
-        league = request.args.get("league")
-        games = get_odds(league)
-        insert_games(league, games )
         conn = mysql.connection
         curr = conn.cursor()
-        query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
-        curr.execute(query)
-        data = curr.fetchall()
-        if not data:
-            abort(500)
-        return {'success':data}
-    except Exception as e: 
-        print(e)
+        query = "INSERT INTO {league} (id, home_team, away_team, date, OU) VALUES (\"{id}\",\"{home_team}\",\"{away_team}\", \"{date}\", {OU} ) ON DUPLICATE KEY UPDATE OU={OU}".format( id=id, league=league, home_team=home_team, away_team=away_team, date=date, OU=OU )
+        curr.execute(query) 
+        conn.commit()
+
+        print("inserted")
+
+
+@app.route( '/get-games', methods=['GET'] )
+def get_games():
+    league = request.args.get("league")
+    games = get_odds(league)
+    insert_games(league, games, 'OU' )
+    conn = mysql.connection
+    curr = conn.cursor()
+    query = "SELECT id, home_team, away_team, date, OU FROM {league} limit 10".format(league=request.args['league'])  
+    curr.execute(query)
+    data = curr.fetchall()
+    if not data:
         abort(500)
+    return {'success':data}
+   
 
 
 @app.route( '/logout', methods=['GET'])

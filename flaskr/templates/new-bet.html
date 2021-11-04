@@ -47,7 +47,7 @@
             
             games = response['success']
             $.each(games, function(i, teams){
-              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + '</option>' );
+              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + ' ' + teams[3] + ' ' + teams[4] + '</option>' );
                 console.log( teams );
               });
             $("select#game").show()
