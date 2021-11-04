@@ -191,25 +191,37 @@ def bet():
             print(e)
             abort(500) 
 
-@app.route( '/get-games', methods=['GET'] )
-def get_games():
-    try:
-        # 'sport': 'americanfootball_nfl', 
-        URL = 'https://api.the-odds-api.com/v4/sports/'
 
-        print(URL)
-        URL += "americanfootball_nfl/odds"
+def get_odds(league):
+    try:
+        URL = 'https://api.the-odds-api.com/v4/sports/{league}/odds'.format(league=league)
         response = requests.get( URL, params = 
             { 'api_key':API_KEY, 
             'markets':'totals',
             'regions':'us' } )
         if response.status_code != 200:
             return {'error': 'API FAILED'}
-        for game in response.json():
-            print( game['id'], game['home_team'], game['away_team'])
-            for lines in game['bookmakers']:
-                if lines['key'] == 'draftkings':
-                    print( lines )
+        return response.json()
+    except Exception as e:
+        return False
+
+def insert_games( league, games ):
+    # conn = mysql.connection
+    # curr = conn.cursor()
+    # query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
+    # curr.execute(query)
+    for game in games:
+        print( game['id'], game['home_team'], game['away_team'] )
+        for bookmakers in game['bookmakers']:
+            print(bookmakers)
+        
+@app.route( '/get-games', methods=['GET'] )
+def get_games():
+    try:
+        league = request.args.get("league")
+        games = get_odds(league)
+        
+        insert_games(league, games )
         conn = mysql.connection
         curr = conn.cursor()
         query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
@@ -233,4 +245,6 @@ def logout():
 
 if __name__== "__main__":
     app.run(port=5002, host="0.0.0.0")
+
+
 
