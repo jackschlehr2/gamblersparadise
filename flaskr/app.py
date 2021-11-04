@@ -220,7 +220,7 @@ def insert_games( league, games, bet_type ):
         date = game['commence_time']
         hours = date[:10]
         minutes = date[12:-1]
-        date = hours + " " + minutes
+        date = hours 
         print( game['id'], game['home_team'], game['away_team'], hours )
         for bookmakers in game['bookmakers']:
             if bookmakers['key'] == 'draftkings':
@@ -230,7 +230,7 @@ def insert_games( league, games, bet_type ):
         
         conn = mysql.connection
         curr = conn.cursor()
-        query = "INSERT INTO {league} (id, home_team, away_team, date, OU) VALUES (\"{id}\",\"{home_team}\",\"{away_team}\", \"{date}\", {OU} ) ON DUPLICATE KEY UPDATE OU={OU}".format( id=id, league=league, home_team=home_team, away_team=away_team, date=date, OU=OU )
+        query = "INSERT INTO {league} (id, home_team, away_team, date, OU) VALUES (\"{id}\",\"{home_team}\",\"{away_team}\", \"{date}\", {OU} ) ON DUPLICATE KEY UPDATE OU={OU}, date=\"{date}\"".format( id=id, league=league, home_team=home_team, away_team=away_team, date=date, OU=OU )
         curr.execute(query) 
         conn.commit()
 
@@ -244,7 +244,7 @@ def get_games():
     insert_games(league, games, 'OU' )
     conn = mysql.connection
     curr = conn.cursor()
-    query = "SELECT id, home_team, away_team, date, OU FROM {league} limit 10".format(league=request.args['league'])  
+    query = "SELECT id, home_team, away_team, DATE_FORMAT(date,'%y-%m-%d'), OU FROM {league} limit 10".format(league=request.args['league'])  
     curr.execute(query)
     data = curr.fetchall()
     if not data:
