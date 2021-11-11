@@ -15,6 +15,10 @@ to turn debug mode on type `export FLASK_ENV=development` <br />
 
 
 
-help from https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972
+help from 
+
+https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972
 
 https://pythonprogramming.net/decorator-wrappers-flask-tutorial-login-required/?completed=/flask-user-log-in-system-tutorial/
+
+https://github.com/somanath-goudar/html-css-projects/tree/master/twitter-clone
