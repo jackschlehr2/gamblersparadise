@@ -2,21 +2,20 @@ from flask import Flask, render_template, request, json, session, redirect, url_
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-
+import requests
 
 mysql = MySQL()
 
 app = Flask(__name__)
  
 # MySQL configurations
- 
+API_KEY='92536bc787b6dca1777c13fbb645e766'
 app.config['MYSQL_USER'] = 'jschlehr'
 app.config['MYSQL_PASSWORD'] = 'notr3dam3'
 app.config['MYSQL_DB'] = 'jschlehr'
 app.config['MYSQL_HOST'] = 'localhost'
 app.secret_key = "supersecretkey321"
 mysql.init_app(app)
-
 
 
 def login_required(f):
@@ -192,20 +191,66 @@ def bet():
             print(e)
             abort(500) 
 
-@app.route( '/get-games', methods=['GET'] )
-def get_games():
+
+def get_odds(league):
+    print('Making Request')
     try:
+        URL = 'https://api.the-odds-api.com/v4/sports/{league}/odds'.format(league=league)
+        print( URL )
+        response = requests.get( URL, params = 
+            { 'api_key':API_KEY, 
+            'markets':'totals',
+            'regions':'us' } )
+        if response.status_code != 200:
+            return {'error': 'API FAILED'}
+        return response.json()
+    except Exception as e:
+        return False
+
+def insert_games( league, games, bet_type ):
+    # conn = mysql.connection
+    # curr = conn.cursor()
+    # query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
+    # curr.execute(query)
+    print("Traversing games")
+    for game in games:
+        id = game['id']
+        home_team = game['home_team']
+        away_team = game['away_team']
+        date = game['commence_time']
+        hours = date[:10]
+        minutes = date[12:-1]
+        date = hours 
+        print( game['id'], game['home_team'], game['away_team'], hours )
+        for bookmakers in game['bookmakers']:
+            if bookmakers['key'] == 'draftkings':
+                if bet_type == 'OU':
+                    OU = bookmakers['markets'][0]['outcomes'][0]['point']
+                    # print(bookmakers['markets'][0] )
+        
         conn = mysql.connection
         curr = conn.cursor()
-        query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
-        curr.execute(query)
-        data = curr.fetchall()
-        if not data:
-            abort(500)
-        return {'success':data}
-    except Exception as e: 
-        print(e)
+        query = "INSERT INTO {league} (id, home_team, away_team, date, OU) VALUES (\"{id}\",\"{home_team}\",\"{away_team}\", \"{date}\", {OU} ) ON DUPLICATE KEY UPDATE OU={OU}, date=\"{date}\"".format( id=id, league=league, home_team=home_team, away_team=away_team, date=date, OU=OU )
+        curr.execute(query) 
+        conn.commit()
+
+        print("inserted")
+
+
+@app.route( '/get-games', methods=['GET'] )
+def get_games():
+    league = request.args.get("league")
+    games = get_odds(league)
+    insert_games(league, games, 'OU' )
+    conn = mysql.connection
+    curr = conn.cursor()
+    query = "SELECT id, home_team, away_team, DATE_FORMAT(date,'%y-%m-%d'), OU FROM {league} limit 10".format(league=request.args['league'])  
+    curr.execute(query)
+    data = curr.fetchall()
+    if not data:
         abort(500)
+    return {'success':data}
+   
 
 
 @app.route( '/logout', methods=['GET'])
@@ -218,4 +263,6 @@ def logout():
 
 if __name__== "__main__":
     app.run(port=5002, host="0.0.0.0")
+
+
 
