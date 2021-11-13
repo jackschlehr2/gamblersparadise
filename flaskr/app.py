@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import requests
-
+from datetime import date
 mysql = MySQL()
 
 app = Flask(__name__)
@@ -174,22 +174,27 @@ def bet():
     if request.method=='GET':
         return render_template( 'new-bet.html')
     elif request.method=='POST':
-        try:
-
-            _bet_amount = request.form['inputBetAmount']
-            _bet_league = request.form['league']
-            if _bet_amonut and _bet_league and _game_id:
-                pass
-            #     conn = mysql.connection
-            #     curr = conn.cursor()
-            #     curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
-            #                                             ( _name, _hashed_password, _email ) )
-            #     conn.commit()
-            print(request.form)
+        _bet_amount = int( request.form['betAmount'] )
+        _bet_league = request.form['league']
+        _game_id = request.form['game']
+        _OU      = request.form['OU']
+        if _OU == 'over':
+            _OU = 1
+        else:
+            _OU = 0
+        _type = "OU"
+        print(type(_bet_amount),_bet_league,_game_id,_OU)
+        if _bet_amount and _bet_league and _game_id:
+            conn = mysql.connection
+            curr = conn.cursor()
+            query = "INSERT INTO bets (amount, submitted_date, user_id, type, game_id, ou, league) \
+                          VALUES ({_bet_amount}, \"{date}\", {user_id}, \"{_type}\", \"{_game_id}\", \"{_OU}\", \"{_bet_league}\")".format( _bet_amount=_bet_amount,  date=str(date.today()), user_id=int(session['user_id']),_type=_type, _game_id=_game_id,_OU=int(_OU), _bet_league=_bet_league )
+            print(query)
+            curr.execute( query )
+            conn.commit()
+            return {'status':'success'}
+        else:
             return {'status':'fail'}
-        except Exception as e: 
-            print(e)
-            abort(500) 
 
 
 def get_odds(league):
@@ -221,13 +226,15 @@ def insert_games( league, games, bet_type ):
         hours = date[:10]
         minutes = date[12:-1]
         date = hours 
-        print( game['id'], game['home_team'], game['away_team'], hours )
+        OU = None
         for bookmakers in game['bookmakers']:
             if bookmakers['key'] == 'draftkings':
                 if bet_type == 'OU':
                     OU = bookmakers['markets'][0]['outcomes'][0]['point']
-                    # print(bookmakers['markets'][0] )
         
+        if not ( home_team and away_team and date and hours and minutes and date and OU ):
+            print("Error can't find metrics ")
+            return 
         conn = mysql.connection
         curr = conn.cursor()
         query = "INSERT INTO {league} (id, home_team, away_team, date, OU) VALUES (\"{id}\",\"{home_team}\",\"{away_team}\", \"{date}\", {OU} ) ON DUPLICATE KEY UPDATE OU={OU}, date=\"{date}\"".format( id=id, league=league, home_team=home_team, away_team=away_team, date=date, OU=OU )
@@ -262,7 +269,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5002, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
 
 
 
