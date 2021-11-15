@@ -1,0 +1,27 @@
+{% extends "header.html" %}
+
+{% block body %}
+<style>
+  h1 {text-align: center;}
+</style>
+      <div>
+
+        <a href="/add-friend/{{account_name}}"><button type="button" class="btn btn-outline-primary me-2">Add friend</button></a>
+
+        <header>
+          <h1>Profile for {{account_name}}</h1>
+        </header>
+
+      </div>
+      <br>
+      <body>
+        <h6>
+        Wins: <br>  
+        Losses: <br>
+        W/L Percentage: <br>
+        Total Earnings: <br>
+        </h6>
+      </body>
+
+{% endblock  %}
+

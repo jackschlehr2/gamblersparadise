@@ -6,32 +6,17 @@
  
       <div class="jumbotron">
         <h1>Gambler's Paradise</h1>
-        <form class="form-signin">
+        <form class="form-signin" action="/sign-up" method="POST">
             <label for="inputUserName" class="sr-only">User Name</label>
                 <input type="name" name="inputName" id="inputName" class="form-control" placeholder="User Name" required autofocus>
             <label for="inputEmail" class="sr-only">Email address</label>
                 <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
             <label for="inputPassword" class="sr-only">Password</label>
                 <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
-            <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="button">Sign up</button>
+            <button type=submit id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="button">Sign up</button>
         </form>
       </div>
     </div>
-  <script>$(function() {
-    $('#btnSignUp').click(function() {
- 
-        $.ajax({
-            url: '/sign-up',
-            data: $('form').serialize(),
-            type: 'POST',
-            success: function(response) {
-                window.location.href = "/account";
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
-    });
-});</script>
+
 
 {% endblock  %}
