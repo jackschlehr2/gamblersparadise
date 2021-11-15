@@ -31,7 +31,8 @@ def login_required(f):
 
 @app.route("/")
 def main():
-    return render_template('index.html')
+    users = get_users()
+    return render_template('index.html', users=users)
 
 
 @app.route('/sign-up-page')
@@ -44,6 +45,8 @@ def signUp():
     _email = request.form['inputEmail']
     _password = request.form['inputPassword']
     if _name and _email and _password:
+        if username_exists(_name):
+            return render_template('signup.html', message="username exists")
         conn = mysql.connection
         curr = conn.cursor()
         _hashed_password = generate_password_hash(_password)
@@ -55,9 +58,62 @@ def signUp():
         curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
         data = curr.fetchall()
         session['user_id'] = data[0][0]
-        return json.dumps( {'staus':'success'} )
+        return render_template('account.html',account_name=session['user_name'],  message="Account Successfully made!")
     else:
-        return json.dumps({'html':'<span>Enter the required fields</span>'})
+        return render_template('signup.html', message="an error was encountered, try again")
+
+def username_exists(username):
+    conn = mysql.connection
+    curr = conn.cursor()
+    query= "SELECT * FROM users WHERE user_username = \"{user}\"".format(user=username)
+    curr.execute(query)
+    data = curr.fetchall()
+    if len(data) > 0:
+        return True
+    return False
+
+
+@app.route( "/profile/<username>", methods=['POST','GET'])
+@login_required
+def view_profile(username):
+    conn = mysql.connection
+    curr = conn.cursor()
+    query= "SELECT * FROM users WHERE user_username = \"{user}\"".format(user=username)
+    curr.execute(query)
+    data = curr.fetchall()
+    num_followers=0
+    num_following=0
+
+
+    return render_template('profile.html', account_name=username, \
+            num_followers=num_followers, num_following=num_following)
+
+
+@app.route( "/add-friend/<username>", methods=['POST','GET'])
+@login_required
+def add_friend(username):
+    conn = mysql.connection
+    curr = conn.cursor()
+    query = "select user_id from users where user_username=\"{username}\"".format(username=username)
+    curr.execute( query )
+    data = curr.fetchall()
+    try:
+        friend_id = int(data[0][0])
+    except Exception as e:
+        print(e)
+        return 
+    query = "INSERT INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=friend_id )
+    print(query)
+    curr.execute( query )
+    conn.commit()
+    url = "/profile/{}".format(username)
+    return view_profile(username)
+
+
+
+
+
+
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -87,6 +143,8 @@ def login():
                 session['user_name'] = _username
                 return redirect( url_for( 'account') )
             return json.dumps( {'fail': "fail"})
+
+
 
 
 @app.route( '/account', methods=['GET'])
@@ -165,6 +223,17 @@ def delete_account():
             return render_template('delete_account.html', message="Password Not Correct")
     else:
         return {'status':'error'}
+
+
+def get_users():
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT user_username FROM users limit 10" )
+    data = curr.fetchall()
+    print(data)
+    return data
+
+
 
 
 @app.route( '/new-bet', methods=['GET', 'POST'])

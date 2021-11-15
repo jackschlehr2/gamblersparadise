@@ -8,27 +8,36 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
   </head>
-<header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <ul class="nav col-12 col-md-auto mb-2 justify-content-left mb-md-0">
+<header class="d-flex noflex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-left mb-md-0 " style="display: flex; flex-wrap: nowrap;">
       
       <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
-      <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
+      <li style="width: 100%"><a href="#" class="nav-link px-2 link-dark">Features</a></li>
       {% if session.logged_in %}
         <li><a href="/logout"><button type="button" class="btn btn-outline-primary me-2">Logout</button></a></li>
         <li><a href="/account"><button type="button" class="btn btn-primary">Account</button></a></li>
       {% else %}
         <li><a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a></li>
-        <li><a href="/sign-up-page"><button type="button" class="btn btn-primary">Sign-up</button></a></li>
+        <li><a href="/sign-up-page" ><button type="button" class="btn btn-primary" style="
+          width: max-content;" >Sign-up</button></a></li>
       {% endif %}
     </ul>
 </header>
 <body id="override">
   {% if message %}
-    <div>
-      <h1 style="color: blue;">
+    {% if message["status"] == "failiure" %}
+      <div class="alert alert-danger" role="alert">
         {{message}}
-      </h1>
+      </div>
+    {% elif message["status"] == "success" %}
+      <div class="alert alert-success" role="alert">
+        {{message}}
+      </div>
+    {% else %}
+    <div class="alert alert-primary" role="alert">
+      {{message}}
     </div>
+    {% endif %}
   {% endif %}
   {% block body %} {% endblock %}
 </body>
