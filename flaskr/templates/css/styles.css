@@ -2,3 +2,9 @@ body#override header ul li button{
     margin-left: 0.25rem;
 }
 
+h1{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 60px;
+    text-align: center;
+}
+
