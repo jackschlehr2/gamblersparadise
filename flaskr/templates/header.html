@@ -18,12 +18,13 @@
         <li><a href="/account"><button type="button" class="btn btn-primary">Account</button></a></li>
       {% else %}
         <li><a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a></li>
-        <li><a href="/sign-up-page" ><button type="button" class="btn btn-primary" style="
+        <li><a href="/sign-up" ><button type="button" class="btn btn-primary" style="
           width: max-content;" >Sign-up</button></a></li>
       {% endif %}
     </ul>
 </header>
-<body id="override">
+<body id="override" style="
+display: block;">
   {% if message %}
     {% if message["status"] == "failiure" %}
       <div class="alert alert-danger" role="alert">
