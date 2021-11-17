@@ -2,20 +2,47 @@
 
 {% block body %}
 
-<h1 style="text-align: center; font-family: 'Times New Roman', Times, serif;">
-Gambler's Paradise
-</h1>
-<h2 style="text-align: left; font-family: 'Times New Roman', Times, serif;">
-Purpose
-</h2>
+<!-- <h1>this will be the main homepage</h1> -->
 
-<h2 style="text-align: left;  font-family: 'Times New Roman', Times, serif;">
-User Activity
-</h2>
+<img src="https://production.listennotes.com/podcasts/gamblers-paradise-fRwzZUEL_b1-Tczl16baZUJ.1400x1400.jpg" alt="Welcome to Gambler's Paradise!" style="width:450px;height:400px;" class = "center">
 
-<h2 style="text-align: left;  font-family: 'Times New Roman', Times, serif;">
-Friends Activity
-</h2>
+<div class="center">
+  <h2>Find friends</h2>
+<table class="center">
+<tr>
+    <th>Username</th>
+    <th>View Profile</th>
+    <th>AddFriend</th>
+  </tr>
+  {% for user in users %}
+    <tr>
+        <td>{{user[0]}}</td>
+        <td><a href="/profile/{{user[0]}}"><button class="btn btn-sm btn-primary btn-block">View Profile</button></a></td>
+        <td><button class="btn btn-sm btn-primary btn-block">Add Friend</button></td>
+    </tr>
+  {% endfor %}
+
+</table>
+</div>
+
+
+
+<style>
+    table, th, td{
+    border:1px solid black;
+    }
+    th{
+        padding: .5rem;
+    }
+    .center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+}
+
+
+</style>
+
 
 {% endblock  %}
 

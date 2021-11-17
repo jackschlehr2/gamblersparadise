@@ -6,23 +6,32 @@
  
       <div class="jumbotron">
         <h1>Submit a new bet</h1>
-        <form class="new-bet" method=POST action="/new-bet">
-            <label for="inputBetAmount" class="sr-only">Bet Amount</label>
-                <input type="number" name="betAmount" id="inputBet" class="form-control" placeholder="Bet Amount" required autofocus>
-            <label for="League" >Choose a League</label>
-                <select name="league" id="league" form="new-bet" onchange="get_games(value)">
-                  <!-- <option value="NFL">NFL</option> -->
-                  <option value="NHL">NHL</option>
-                  <option value="MLB">MLB</option>
-                  <!-- <option value="NBA">NBA</option> -->
-                  <!-- <option value="NCAAF">NCAAF</option> -->
-                </select>
-            <label for="Game">Choose a Game</label>
-                <select name="game" id="game">
-                  
-                </select>
+        <form id="betform" class="new-bet" method=POST action="/new-bet">
+            <label for="betAmount" class="sr-only">Bet Amount</label>
+                <input type="number" name="betAmount" id="inputBet" placeholder="Bet Amount" required autofocus>
+              <br>
+
             
-        
+            <label for="league" >Choose a League</label>
+                <select name="league" id="league" form="betform" onchange="get_games(value)" required autofocus>
+                  <option selected disabled>Choose here</option>
+                  <option value="americanfootball_nfl">NFL</option> -->
+                  <!-- <option value="baseball_mlb">NHL</option> -->
+                  <!-- <option value="baseball_mlb">MLB</option> -->
+                  <option value="basketball_nba">NBA</option> -->
+                  <option value="americanfootball_ncaaf">NCAAF</option> -->
+                </select>
+                <input type="hidden" name="league">
+              <br>
+              
+            <label for="Game">Choose a Game</label>
+                <select name="game" id="game"  form="betform"required>
+                  <option selected disabled>Choose League first</option>
+                </select>
+            <br>
+            <input type="radio" id="over" name="OU" value="over"><label for="over">Over</label>
+            <input type="radio" id="under" name="OU" value="under"><label for="under">Under</label>
+                <br>
             <button type=submit id="btnSubmit" class="btn btn-lg btn-primary btn-block" type="button">Submit</button>
         </form>
 
@@ -31,8 +40,6 @@
         
     </div>
     <script>
-      $("#game").hide();
-      $("label#game").hide();
       function get_games(league){
         removeGames();
         $("select#game").hide()
@@ -47,7 +54,7 @@
             
             games = response['success']
             $.each(games, function(i, teams){
-              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + '</option>' );
+              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + ' ' + teams[3] + ' ' + teams[4] + '</option>' );
                 console.log( teams );
               });
             $("select#game").show()
