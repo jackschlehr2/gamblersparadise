@@ -26,17 +26,17 @@
 <body id="override" style="
 display: block;">
   {% if message %}
-    {% if message["status"] == "failiure" %}
+    {% if message["status"] == "error" %}
       <div class="alert alert-danger" role="alert">
-        {{message}}
+        {{message["message"]}}
       </div>
     {% elif message["status"] == "success" %}
       <div class="alert alert-success" role="alert">
-        {{message}}
+        {{message["message"]}}
       </div>
     {% else %}
     <div class="alert alert-primary" role="alert">
-      {{message}}
+      {{message["message"]}}
     </div>
     {% endif %}
   {% endif %}

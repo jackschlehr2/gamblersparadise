@@ -52,7 +52,8 @@ def signUp():
         _password = request.form['inputPassword']
         if _name and _email and _password:
             if username_exists(_name):
-                return render_template('signup.html', message="username exists" )
+                return render_template('signup.html', message={"status":"message"
+                ,"message":"username exists" })
             conn = mysql.connection
             curr = conn.cursor()
             _hashed_password = generate_password_hash(_password)
@@ -64,9 +65,9 @@ def signUp():
             curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
             data = curr.fetchall()
             session['user_id'] = data[0][0]
-            return render_template('account.html',account_name=session['user_name'],  message="Account Successfully made!")
+            return render_template('account.html',account_name=session['user_name'],  message={"status":"success", "message":"Account Successfully made!"} )
         else:
-            return render_template('signup.html', message="an error was encountered, try again")
+            return render_template('signup.html', message={"status":"error", "message":"an error was encountered, try again"} )
 
 def username_exists(username):
     conn = mysql.connection
@@ -130,7 +131,7 @@ def login():
         _username = request.form['inputName']
         _password = request.form['inputPassword']
         if not (_username and _password):
-            return render_template( 'index.html', message="error occured")
+            return render_template( 'index.html', message={"status":"error", "message":"error occured"})
         if _username and _password:
             conn = mysql.connection
             curr = conn.cursor()
@@ -148,8 +149,8 @@ def login():
                 session['logged_in'] = True
                 session['user_id'] = data[0][0]
                 session['user_name'] = _username
-                return redirect( url_for( 'account') )
-            return json.dumps( {'fail': "fail"})
+                return render_template('account.html', message={"status":"success", "message":"Logged In!"})
+            return render_template('login.html', message={"status":"error", "message":"Incorrect password"})
 
 
 
@@ -345,12 +346,12 @@ def get_games():
 @login_required
 def logout():
     session.clear()
-    return redirect( "/" )
+    return redirect( url_for( "main", message={"status":"nothing", "message":"Logged Out"} ) )
 
 
 
 if __name__== "__main__":
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5002, host="0.0.0.0")
 
 
 
