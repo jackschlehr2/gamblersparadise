@@ -38,7 +38,7 @@ def main():
 @app.route("/feed")
 @login_required
 def feed():
-    bets = get_bets()
+    bets = get_bets2()
     return render_template( 'feed.html', bets=bets)
 
 @app.route("/features")
@@ -247,6 +247,14 @@ def get_bets():
     print(data)
     return data
 
+def get_bets2():
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT users.user_username, users.user_id, amount, type, league FROM bets, users WHERE bets.user_id = users.user_id")
+    data = curr.fetchall()
+    print(data)
+    return data
+
 
 
 @app.route( '/new-bet', methods=['GET', 'POST'])
@@ -347,7 +355,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5004, host="0.0.0.0")
+    app.run(port=5003, host="0.0.0.0")
 
 # 0 7 * * * 7:00am everyday
 
