@@ -133,6 +133,8 @@ def login():
     elif request.method=='POST':
         _username = request.form['inputName']
         _password = request.form['inputPassword']
+        if not (_username and _password):
+            return render_template( 'index.html', message="error occured")
         if _username and _password:
             conn = mysql.connection
             curr = conn.cursor()
@@ -144,8 +146,7 @@ def login():
                 return json.dumps( {'fail':'fail'})
             # TODO: case where query returns more than one result
             # refactor to make more robust
-            query_password = data[0][3]
-
+            query_password = data[0][2]
             # TODO fix so that the returns are better
             if check_password_hash(query_password, _password):
                 session['logged_in'] = True
@@ -353,7 +354,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
 
 
 
