@@ -35,32 +35,38 @@ def main():
     return render_template('index.html', users=users)
 
 
-@app.route('/sign-up-page')
-def signUpPage():
-    return render_template('signup.html')
+@app.route("/feed")
+@login_required
+def feed():
+    bets = get_bets()
+    return render_template( 'feed.html', bets=bets)
 
-@app.route('/sign-up', methods=['POST'])
+
+@app.route('/sign-up', methods=['POST','GET'])
 def signUp():
-    _name = request.form['inputName']
-    _email = request.form['inputEmail']
-    _password = request.form['inputPassword']
-    if _name and _email and _password:
-        if username_exists(_name):
-            return render_template('signup.html', message="username exists")
-        conn = mysql.connection
-        curr = conn.cursor()
-        _hashed_password = generate_password_hash(_password)
-        curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
-                                                ( _name, _hashed_password, _email ) )
-        conn.commit()
-        session['logged_in'] = True
-        session['user_name'] = _name
-        curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
-        data = curr.fetchall()
-        session['user_id'] = data[0][0]
-        return render_template('account.html',account_name=session['user_name'],  message="Account Successfully made!")
+    if request.method == 'GET':
+        return render_template('signup.html')
     else:
-        return render_template('signup.html', message="an error was encountered, try again")
+        _name = request.form['inputName']
+        _email = request.form['inputEmail']
+        _password = request.form['inputPassword']
+        if _name and _email and _password:
+            if username_exists(_name):
+                return render_template('signup.html', message="username exists" )
+            conn = mysql.connection
+            curr = conn.cursor()
+            _hashed_password = generate_password_hash(_password)
+            curr.execute("INSERT INTO users (user_username, user_password, user_email) VALUES (%s, %s, %s)", 
+                                                    ( _name, _hashed_password, _email ) )
+            conn.commit()
+            session['logged_in'] = True
+            session['user_name'] = _name
+            curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
+            data = curr.fetchall()
+            session['user_id'] = data[0][0]
+            return render_template('account.html',account_name=session['user_name'],  message="Account Successfully made!")
+        else:
+            return render_template('signup.html', message="an error was encountered, try again")
 
 def username_exists(username):
     conn = mysql.connection
@@ -84,7 +90,6 @@ def view_profile(username):
     num_followers=0
     num_following=0
 
-
     return render_template('profile.html', account_name=username, \
             num_followers=num_followers, num_following=num_following)
 
@@ -102,10 +107,11 @@ def add_friend(username):
     except Exception as e:
         print(e)
         return 
-    query = "INSERT INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=friend_id )
-    print(query)
+    query = "INSERT INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=int(friend_id) )
     curr.execute( query )
     conn.commit()
+    print(query)
+
     url = "/profile/{}".format(username)
     return view_profile(username)
 
@@ -116,7 +122,7 @@ def add_friend(username):
 
 
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'] )
 def login():
     if request.method=='GET':
         return render_template('login.html')
@@ -235,6 +241,15 @@ def get_users():
 
 
 
+def get_bets():
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM bets" )
+    data = curr.fetchall()
+    print(data)
+    return data
+
+
 
 @app.route( '/new-bet', methods=['GET', 'POST'])
 @login_required
@@ -282,10 +297,6 @@ def get_odds(league):
         return False
 
 def insert_games( league, games, bet_type ):
-    # conn = mysql.connection
-    # curr = conn.cursor()
-    # query = "SELECT game_id, Team FROM {league} limit 10".format(league=request.args['league'])  
-    # curr.execute(query)
     print("Traversing games")
     for game in games:
         id = game['id']
@@ -320,7 +331,7 @@ def get_games():
     insert_games(league, games, 'OU' )
     conn = mysql.connection
     curr = conn.cursor()
-    query = "SELECT id, home_team, away_team, DATE_FORMAT(date,'%y-%m-%d'), OU FROM {league} limit 10".format(league=request.args['league'])  
+    query = "SELECT id, home_team, away_team, DATE_FORMAT(date,'%y-%m-%d'), OU FROM {league} where date > CURDATE() order by date desc limit 10".format(league=request.args['league'])  
     curr.execute(query)
     data = curr.fetchall()
     if not data:
@@ -338,7 +349,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")
 
 
 
