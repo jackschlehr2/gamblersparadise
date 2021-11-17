@@ -41,6 +41,10 @@ def feed():
     bets = get_bets()
     return render_template( 'feed.html', bets=bets)
 
+@app.route("/features")
+def features():
+    return render_template('features.html')
+
 
 @app.route('/sign-up', methods=['POST','GET'])
 def signUp():
