@@ -21,7 +21,7 @@
             
             <label for="league" >Choose a League</label>
                 <select name="league" id="league" form="betform" onchange="get_games(value)" required autofocus>
-                  <option selected disabled>Choose here</option>
+                  <option value ="" selected disabled hidden>Choose here</option>
                   <option value="americanfootball_nfl">NFL</option>
                   <option value="basketball_nba">NBA</option>
                   <option value="americanfootball_ncaaf">NCAAF</option>
@@ -31,7 +31,7 @@
               
             <label for="Game">Choose a Game</label>
                 <select name="game" id="game"  form="betform"required>
-                  <option selected disabled>Choose League first</option>
+                  <option value ="" selected disabled hidden>Choose League first</option>
                 </select>
             <br>
             <input class="radio" type="radio" id="over" name="OU" value="over"><label for="over">Over</label>
@@ -70,7 +70,7 @@
         </div>
         <div class="post__footer">
           <span class="material-icons"> Like </span>
-          <spam class="material-icons" style="color: grey;">{{bet[1]}}</spam>
+          <span class="material-icons" style="color: grey;">{{bet[1]}}</span>
           <span class="material-icons"> Comment </span>
         </div>
       </div>
