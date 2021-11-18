@@ -122,11 +122,6 @@ def add_friend(username):
 
 
 
-
-
-
-
-
 @app.route('/login', methods=['POST', 'GET'] )
 def login():
     if request.method=='GET':
@@ -244,7 +239,13 @@ def get_bets():
     curr = conn.cursor()
     curr.execute("SELECT * FROM bets" )
     data = curr.fetchall()
-    print(data)
+    data = list(data)
+    for index, bet in enumerate( data ):
+        id = str(bet[5])
+        league = str(bet[7])
+        curr.execute("Select * FROM " + league + " where id=\"" + id + "\"" )
+        teams = curr.fetchall()[0]
+        data[index] = list(data[index]) + list(teams)
     return data
 
 
@@ -265,16 +266,16 @@ def bet():
         else:
             _OU = 0
         _type = "OU"
-        print(type(_bet_amount),_bet_league,_game_id,_OU)
         if _bet_amount and _bet_league and _game_id:
             conn = mysql.connection
             curr = conn.cursor()
-            query = "INSERT INTO bets (amount, submitted_date, user_id, type, game_id, ou, league) \
-                          VALUES ({_bet_amount}, \"{date}\", {user_id}, \"{_type}\", \"{_game_id}\", \"{_OU}\", \"{_bet_league}\")".format( _bet_amount=_bet_amount,  date=str(date.today()), user_id=int(session['user_id']),_type=_type, _game_id=_game_id,_OU=int(_OU), _bet_league=_bet_league )
+            print(session["user_name"])
+            query = "INSERT INTO bets (amount, submitted_date, user_id, type, game_id, ou, league, user_username) \
+                          VALUES ({_bet_amount}, NOW(), {user_id}, \"{_type}\", \"{_game_id}\", \"{_OU}\", \"{_bet_league}\", \"{user_username}\")".format( _bet_amount=_bet_amount,  date=str(date.today()), user_id=int(session['user_id']),_type=_type, _game_id=_game_id,_OU=int(_OU), _bet_league=_bet_league,user_username=session["user_name"] )
             print(query)
             curr.execute( query )
             conn.commit()
-            return {'status':'success'}
+            return redirect( "feed" )
         else:
             return {'status':'fail'}
 
@@ -325,8 +326,8 @@ def insert_games( league, games, bet_type ):
 @app.route( '/get-games', methods=['GET'] )
 def get_games():
     league = request.args.get("league")
-    games = get_odds(league)
-    insert_games(league, games, 'OU' )
+    #games = get_odds(league)
+    #insert_games(league, games, 'OU' )
     conn = mysql.connection
     curr = conn.cursor()
     query = "SELECT id, home_team, away_team, DATE_FORMAT(date,'%y-%m-%d'), OU FROM {league} where date > CURDATE() order by date desc limit 10".format(league=request.args['league'])  
@@ -347,7 +348,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5004, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
 
 # 0 7 * * * 7:00am everyday
 
