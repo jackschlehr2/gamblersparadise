@@ -38,7 +38,7 @@ def main():
 @app.route("/feed")
 @login_required
 def feed():
-    bets = get_bets2()
+    bets = get_bets()
     return render_template( 'feed.html', bets=bets)
 
 @app.route("/features")
@@ -356,7 +356,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001, host="0.0.0.0")
+    app.run(port=5000, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
