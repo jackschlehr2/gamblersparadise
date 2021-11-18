@@ -12,15 +12,33 @@
 
     <!-- tweetbox starts -->
     <div class="tweetBox">
-      <form>
+      <form id="betform" class="new-bet" method=POST action="/new-bet">
         <div class="tweetbox__input">
-          <img
-            src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png"
-            alt=""
-          />
-          <input type="text" placeholder="New Bet?" />
+          <label for="betAmount" class="sr-only">Bet Amount</label>
+                <input type="number" name="betAmount" id="inputBet" placeholder="Bet Amount" required autofocus>
+              <br>
+
+            
+            <label for="league" >Choose a League</label>
+                <select name="league" id="league" form="betform" onchange="get_games(value)" required autofocus>
+                  <option value ="" selected disabled hidden>Choose here</option>
+                  <option value="americanfootball_nfl">NFL</option>
+                  <option value="basketball_nba">NBA</option>
+                  <option value="americanfootball_ncaaf">NCAAF</option>
+                </select>
+                <input type="hidden" name="league">
+              <br>
+              
+            <label for="Game">Choose a Game</label>
+                <select name="game" id="game"  form="betform"required>
+                  <option value ="" selected disabled hidden>Choose League first</option>
+                </select>
+            <br>
+            <input class="radio" type="radio" id="over" name="OU" value="over"><label for="over">Over</label>
+            <input class="radio" type="radio" id="under" name="OU" value="under"><label for="under">Under</label>
+                <br>
+            <button  type=submit id="btnSubmit" class="tweetBox__tweetButton">Submit</button>
         </div>
-        <button class="tweetBox__tweetButton">Bet</button>
       </form>
     </div>
     <!-- tweetbox ends -->
@@ -38,25 +56,65 @@
       <div class="post__body">
         <div class="post__header">
           <div class="post__headerText">
-            <h3>User: {{bet[0]}}</h3>
+            <h3>{{bet[8]}}</h3>
           </div>
           <div class="post__headerDescription">
-            <p>Sport: {{bet[4]}}</p>
-            <p>Bet Type: {{bet[3]}}</p>
-            <p>Amount: {{bet[1]}}</p>
+            <h6>{{ bet[10] }} vs. {{ bet[11] }} on {{bet[12]}} </h6>
+            {% if bet[6] == 1 %}
+              <p>{{bet[0]}} on OVER {{bet[3]}} points</p>
+            {% else %}
+            <p>{{bet[0]}} on UNDER {{bet[3]}} points</p>
+            {% endif %}
+            <!-- <p>{{bet}}</p> -->
           </div>
         </div>
         <div class="post__footer">
           <span class="material-icons"> <button><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bot%C3%B3n_Me_gusta.svg/1200px-Bot%C3%B3n_Me_gusta.svg.png" style="width:50px;height:30px;"></button> </span>
-          
+          <span class="material-icons" style="color: grey;">{{bet[1]}}</span>
           <span class="material-icons"> <button><img src="https://www.pngfind.com/pngs/m/247-2474217_png-file-svg-comment-icon-transparent-png.png" style="width:50px;height:20px;"></button> </span>
+           
+          </div>
+        </div>
+        <div class="post__footer">
+          
+
         </div>
       </div>
     </div>
     {% endfor %}
     <!-- post ends -->
+</div>
+    <script>
+      function get_games(league){
+        removeGames();
+        $("select#game").hide()
 
+        var serializedData = $("select#league").serialize();
+        console.log( serializedData );
+        $.ajax({
+          type: "GET",
+          url: "/get-games",
+          data: serializedData,
+          success: function( response ){
+            
+            games = response['success']
+            $.each(games, function(i, teams){
+              $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + ' ' + teams[3] + ' ' + teams[4] + '</option>' );
+                console.log( teams );
+              });
+            $("select#game").show()
 
+          },
+          error: function( xhr, status, error ){
+            console.log( "request failed " );
+          }
+        });
+      }
+      function removeGames(){
+        const myNode = document.getElementById("game");
+        myNode.innerHTML = '';
+      }
+    </script>
     <style>
         * {
             margin: 0;
@@ -183,8 +241,11 @@
           .tweetbox__input {
             display: flex;
             padding: 20px;
+            flex-direction: column;
           }
-          
+          form input.radio{
+            display: inline;
+          }
           .tweetbox__input input {
             flex: 1;
             margin-left: 20px;
