@@ -112,10 +112,10 @@ def add_friend(username):
     except Exception as e:
         print(e)
         return 
-    query = "INSERT INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=int(friend_id) )
+    query = "INSERT IGNORE INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=int(friend_id) )
+    print( query )
     curr.execute( query )
     conn.commit()
-    print(query)
     if request.method == "GET":
         url = "/profile/{}".format(username)
         return view_profile(username)
