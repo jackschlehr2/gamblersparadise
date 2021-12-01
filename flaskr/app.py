@@ -102,6 +102,7 @@ def view_profile(username):
 @app.route( "/add-friend/<username>", methods=['POST','GET'])
 @login_required
 def add_friend(username):
+    
     conn = mysql.connection
     curr = conn.cursor()
     query = "select user_id from users where user_username=\"{username}\"".format(username=username)
@@ -116,9 +117,14 @@ def add_friend(username):
     curr.execute( query )
     conn.commit()
     print(query)
-
-    url = "/profile/{}".format(username)
-    return view_profile(username)
+    if request.method == "GET":
+        url = "/profile/{}".format(username)
+        return view_profile(username)
+    elif request.method == "POST":
+        return {'status':'success'}
+    return {'status':'error'}
+    
+    
 
 
 
@@ -237,7 +243,7 @@ def get_users():
 def get_bets():
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("SELECT * FROM bets" )
+    curr.execute("SELECT * FROM bets order by submitted_date desc" )
     data = curr.fetchall()
     data = list(data)
     for index, bet in enumerate( data ):
@@ -356,7 +362,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5000, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
