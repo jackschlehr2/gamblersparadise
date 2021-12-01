@@ -94,9 +94,8 @@ def view_profile(username):
     data = curr.fetchall()
     num_followers=0
     num_following=0
-
     return render_template('profile.html', account_name=username, \
-            num_followers=num_followers, num_following=num_following)
+            num_followers=num_followers, num_following=num_following, friends=get_friends(username))
 
 
 @app.route( "/add-friend/<username>", methods=['POST','GET'])
@@ -163,7 +162,8 @@ def login():
 @app.route( '/account', methods=['GET'])
 @login_required
 def account():
-    return render_template('account.html', account_name=session['user_name'])
+    uname = session['user_name']
+    return render_template('account.html', account_name=session['user_name'], friends=get_friends(uname))
 
 @app.route( '/change-password', methods=['GET', 'POST'])
 @login_required
@@ -260,6 +260,14 @@ def get_bets2():
     curr.execute("SELECT users.user_username, users.user_id, amount, type, league FROM bets, users WHERE bets.user_id = users.user_id")
     data = curr.fetchall()
     print(data)
+    return data
+
+def get_friends(uname):
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT user_username from users,(SELECT friends.friend_id FROM friends, users WHERE friends.user_id = users.user_id AND friends.user_id <> friends.friend_id AND users.user_username =\"" + uname + "\")a WHERE users.user_id=a.friend_id" )
+    data = curr.fetchall()
+    data = list(data)
     return data
 
 
