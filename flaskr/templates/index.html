@@ -4,7 +4,7 @@
 
 <!-- <h1>this will be the main homepage</h1> -->
 
-<img src="https://production.listennotes.com/podcasts/gamblers-paradise-fRwzZUEL_b1-Tczl16baZUJ.1400x1400.jpg" alt="Welcome to Gambler's Paradise!" style="width:450px;height:400px;" class = "center">
+<img src="https://production.listennotes.com/podcasts/gamblers-paradise-fRwzZUEL_b1-Tczl16baZUJ.1400x1400.jpg" alt="Welcome to Gambler's Paradise!" style="max-width:450px;max-height:400px;height:100%;width:100%" class = "center">
 
 <div class="center">
   <h2>Find friends</h2>
@@ -19,8 +19,15 @@
         <td>{{user[0]}}</td>
         <td><a href="/profile/{{user[0]}}"><button class="btn btn-sm btn-primary btn-block">View Profile</button></a></td>
         <td><a href="/add-friend/{{user[0]}}"><button class="btn btn-sm btn-primary btn-block">Add Friend</button></a></td>
+
     </tr>
-  {% endfor %}
+    {% for user in users %}
+      <tr>
+          <td>{{user[0]}}</td>
+          <td><a href="/profile/{{user[0]}}"><button class="btn btn-sm btn-primary btn-block">View Profile</button></a></td>
+          <td><button onclick="addfriend( '/add-friend/{{user[0]}}')" class="btn btn-sm btn-primary btn-block" id="add-friend">Add Friend</button></td>
+      </tr>
+    {% endfor %}
 
 </table>
 </div>
@@ -28,21 +35,49 @@
 
 
 <style>
-    table, th, td{
+    th, td{
     border:1px solid black;
     }
+
     th{
         padding: .5rem;
     }
     .center {
-      display: block;
+      display: flex;
       margin-left: auto;
       margin-right: auto;
-}
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column; 
+    }
+    h2{
+      align-self: center;
+    }
+    tr{
+      margin: 10px;
+    }
+    table{
+      margin: 20px;
+    }
 
 
 </style>
-
+<script>
+  function addfriend(url){
+    console.log(url)
+    $.ajax({
+      
+      type: "POST",
+      url: url,
+      success: function(data) {
+        console.log(data);
+      },
+      error: function(data){
+        console.log(data);
+      }
+    });
+  };
+</script>
 
 {% endblock  %}
 
