@@ -59,7 +59,7 @@
             <h3>{{bet[8]}}</h3>
           </div>
           <div class="post__headerDescription">
-            <h6>{{ bet[10] }} vs. {{ bet[11] }} on {{bet[12]}} </h6>
+            <h6>{{ bet[11] }} vs. {{ bet[12] }} on {{bet[13]}} </h6>
             {% if bet[6] == 1 %}
               <p>{{bet[0]}} on OVER {{bet[3]}} points</p>
             {% else %}
@@ -69,21 +69,24 @@
           </div>
         </div>
         <div class="post__footer">
-          <span class="material-icons"> <button><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bot%C3%B3n_Me_gusta.svg/1200px-Bot%C3%B3n_Me_gusta.svg.png" style="width:50px;height:30px;"></button> </span>
+           <button onclick="like( this, '/like/{{bet[2]}}')"style="border: none;background:none;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="black" class="bi bi-heart-fill" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+          </svg> <b>{{bet[9]}}</b>
+          
+        </button> 
           <span class="material-icons" style="color: grey;">{{bet[1]}}</span>
-          <span class="material-icons"> <button><img src="https://www.pngfind.com/pngs/m/247-2474217_png-file-svg-comment-icon-transparent-png.png" style="width:50px;height:20px;"></button> </span>
+          <button style="border: none;background:none;"><img src="https://www.pngfind.com/pngs/m/247-2474217_png-file-svg-comment-icon-transparent-png.png" style="width:50px;height:20px;"></button> 
+
            
           </div>
         </div>
-        <div class="post__footer">
-          
 
-        </div>
-      </div>
+      
     </div>
     {% endfor %}
     <!-- post ends -->
-</div>
+  </div>
+  </div>
     <script>
       function get_games(league){
         removeGames();
@@ -96,7 +99,6 @@
           url: "/get-games",
           data: serializedData,
           success: function( response ){
-            
             games = response['success']
             $.each(games, function(i, teams){
               $('select#game').append('<option value="'+teams[0]+'">' + teams[1] + ' vs ' + teams[2] + ' ' + teams[3] + ' ' + teams[4] + '</option>' );
@@ -114,6 +116,22 @@
         const myNode = document.getElementById("game");
         myNode.innerHTML = '';
       }
+      function like(param, url){
+        console.log(url)
+        $.ajax({
+          type: "POST",
+          url: url,
+          success: function(data) {
+            var like_val = param.getElementsByTagName("B");
+            like_val[0].innerHTML = parseInt(like_val[0].innerHTML) + 1;
+            console.log(like_val[0].innerHTML);
+          },
+          error: function(data){
+            console.log(data);
+          }
+        });
+      };
+    
     </script>
     <style>
         * {
