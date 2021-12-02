@@ -243,9 +243,8 @@ def get_users():
 def get_bets():
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("select bets.*, case when likes.likes is NULL THEN 0 ELSE likes.likes END AS likes from (select bet_id, count(*) as likes  from likes group by bet_id) likes right outer join bets on likes.bet_id=bets.bet_id" )
+    curr.execute("select bets.*, case when likes.likes is NULL THEN 0 ELSE likes.likes END AS likes from (select bet_id, count(*) as likes from likes group by bet_id) likes right outer join bets on likes.bet_id=bets.bet_id order by submitted_date desc" )
     data = curr.fetchall()
-    [ print(t) for t in data ]
     data = list(data)
     for index, bet in enumerate( data ):
         id = str(bet[5])
@@ -364,14 +363,19 @@ def get_games():
 @app.route( '/like/<bet_id>', methods=['POST'])
 @login_required
 def like(bet_id):
+    # check if already liked
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("select * from likes where bet_id=%s and user_id=%s", (bet_id,session['user_id'],) )
+    # check if already like or the user it is the user's own post
+    curr.execute("select bet_id, user_id from likes where bet_id=%s and user_id=%s \
+                  UNION  \
+                  select bet_id, user_id from bets  where bet_id=%s and user_id=%s " \
+                ,(bet_id, session['user_id'], bet_id, session['user_id'],) )
     data = curr.fetchall()
-    print(session['user_id'])
     print(data)
     if len(data) > 0: 
-        abort(500)
+        abort(405)
+    
     try:
         conn = mysql.connection
         curr = conn.cursor()
