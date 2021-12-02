@@ -243,8 +243,9 @@ def get_users():
 def get_bets():
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("SELECT * FROM bets order by submitted_date desc" )
+    curr.execute("select bets.*, case when likes.likes is NULL THEN 0 ELSE likes.likes END AS likes from (select bet_id, count(*) as likes  from likes group by bet_id) likes right outer join bets on likes.bet_id=bets.bet_id" )
     data = curr.fetchall()
+    [ print(t) for t in data ]
     data = list(data)
     for index, bet in enumerate( data ):
         id = str(bet[5])
@@ -357,8 +358,33 @@ def get_games():
     data = curr.fetchall()
     if not data:
         abort(500)
-    return {'success':data}
+    return {'success':data }
    
+
+@app.route( '/like/<bet_id>', methods=['POST'])
+@login_required
+def like(bet_id):
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("select * from likes where bet_id=%s and user_id=%s", (bet_id,session['user_id'],) )
+    data = curr.fetchall()
+    print(session['user_id'])
+    print(data)
+    if len(data) > 0: 
+        abort(500)
+    try:
+        conn = mysql.connection
+        curr = conn.cursor()
+        user_id=session['user_id']
+        curr.execute("Insert ignore into likes VALUES(%s,%s)", (user_id, bet_id,  ) )
+        conn.commit()
+        
+        return {'status':'success'}
+    except Exception as e:
+        print(e) 
+        return {'status':'error'}
+
+
 
 
 @app.route( '/logout', methods=['GET'])
@@ -370,7 +396,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001, host="0.0.0.0")
+    app.run(port=5002, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
