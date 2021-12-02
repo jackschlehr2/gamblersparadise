@@ -89,8 +89,7 @@ def username_exists(username):
 def view_profile(username):
     conn = mysql.connection
     curr = conn.cursor()
-    query= "SELECT * FROM users WHERE user_username = \"{user}\"".format(user=username)
-    curr.execute(query)
+    curr.execute("SELECT * FROM users WHERE user_username = %s", (username,) )
     data = curr.fetchall()
     num_followers=0
     num_following=0
@@ -238,7 +237,11 @@ def get_users():
     print(data)
     return data
 
-
+# trying to make join to get if already friends or not
+# SELECT user_username, user_id 
+# FROM users 
+# full outer join friends on users.user_id = friends.friend_id 
+# where  friends.user_id=(%s), 
 
 def get_bets():
     conn = mysql.connection
@@ -268,7 +271,14 @@ def get_friends(uname):
     curr.execute("SELECT user_username from users,(SELECT friends.friend_id FROM friends, users WHERE friends.user_id = users.user_id AND friends.user_id <> friends.friend_id AND users.user_username =\"" + uname + "\")a WHERE users.user_id=a.friend_id" )
     data = curr.fetchall()
     data = list(data)
+    print(data)
     return data
+
+
+def get_num_followers( username ):
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute( )
 
 
 
@@ -400,7 +410,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5002, host="0.0.0.0")
+    app.run(port=5001, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
