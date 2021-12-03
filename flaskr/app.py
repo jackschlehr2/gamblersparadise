@@ -76,8 +76,8 @@ def signUp():
 def username_exists(username):
     conn = mysql.connection
     curr = conn.cursor()
-    query= "SELECT * FROM users WHERE user_username = \"{user}\"".format(user=username)
-    curr.execute(query)
+    #query= "SELECT * FROM users WHERE user_username = \"{user}\"".format(user=username)
+    curr.execute("SELECT * FROM users WHERE user_username = %(username)s", {'username': username}) #injection protected
     data = curr.fetchall()
     if len(data) > 0:
         return True
@@ -89,7 +89,7 @@ def username_exists(username):
 def view_profile(username):
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("SELECT * FROM users WHERE user_username = %s", (username,) )
+    curr.execute("SELECT * FROM users WHERE user_username = %(username)s", {'username': username}) #injection protected
     data = curr.fetchall()
     num_followers=0
     num_following=0
@@ -103,17 +103,19 @@ def add_friend(username):
     
     conn = mysql.connection
     curr = conn.cursor()
-    query = "select user_id from users where user_username=\"{username}\"".format(username=username)
-    curr.execute( query )
+    #query = "select user_id from users where user_username=\"{username}\"".format(username=username)
+    curr.execute("SELECT user_id FROM users WHERE user_username=%(username)s", {'username': username}) #injection protected
     data = curr.fetchall()
     try:
         friend_id = int(data[0][0])
     except Exception as e:
         print(e)
         return 
-    query = "INSERT IGNORE INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=int(friend_id) )
-    print( query )
-    curr.execute( query )
+    #query = "INSERT IGNORE INTO friends values ( {user_id}, {friend_id} )".format( user_id=int(session['user_id']), friend_id=int(friend_id) )
+    #print( query )
+    user_id=int(session['user_id'])
+    friend_id=int(friend_id)
+    curr.execute("INSERT IGNORE INTO friends values (%s, %s)",(user_id,friend_id))
     conn.commit()
     if request.method == "GET":
         url = "/profile/{}".format(username)
@@ -138,8 +140,7 @@ def login():
         if _username and _password:
             conn = mysql.connection
             curr = conn.cursor()
-            curr.execute("SELECT * FROM users WHERE user_username = (%s) or user_email = (%s)", 
-                                                    ( _username, _username ) )
+            curr.execute("SELECT * FROM users WHERE user_username = (%s) or user_email = (%s)", ( _username, _username ))
             
             data = curr.fetchall()
             if not data:
@@ -179,8 +180,8 @@ def change_password():
         conn = mysql.connection
         curr = conn.cursor()
         _user_id = session['user_id']
-        query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
-        curr.execute( query )
+        #query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
+        curr.execute("SELECT user_password FROM users WHERE user_id = %(_user_id)s", {'_user_id': _user_id}) #injection protected
         data = curr.fetchall()
         current_password = data[0][0]
         if check_password_hash(current_password, old_password_from_form ):
@@ -188,7 +189,8 @@ def change_password():
             query = "UPDATE users SET user_password = \"{new_password_hash}\" where user_id = {user_id}".format(new_password_hash=new_password_hash, user_id=_user_id )
             conn = mysql.connection
             curr = conn.cursor()
-            curr.execute( query )
+            curr.execute("UPDATE users SET user_password = %s where user_id = %s", (new_password_hash, _user_id))
+            #curr.execute(query)
             conn.commit()
             return render_template('account.html', message="Password Updated")
         else:
@@ -212,14 +214,14 @@ def delete_account():
         curr = conn.cursor()
         _user_id = session['user_id']
         query = "SELECT user_password FROM users WHERE user_id = {user_id}".format(user_id=_user_id )
-        curr.execute( query )
+        curr.execute("SELECT user_password FROM users WHERE user_id = %(_user_id)s", {'_user_id': _user_id}) #injection protected
         data = curr.fetchall()
         current_password = data[0][0]
         if check_password_hash(current_password, new_password2 ):
-            delete_query = "DELETE from users where user_id = {user_id}".format(user_id=_user_id )
+            #delete_query = "DELETE from users where user_id = {user_id}".format(user_id=_user_id )
             conn = mysql.connection
             curr = conn.cursor()
-            curr.execute( delete_query )
+            curr.execute("DELETE from users where user_id = %(_user_id)s", {'_user_id': _user_id}) #injection protected
             conn.commit()
             session['logged_in'] = False
             return redirect( "/" )
@@ -410,7 +412,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5001, host="0.0.0.0")
+    app.run(port=5004, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
