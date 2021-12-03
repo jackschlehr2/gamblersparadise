@@ -400,7 +400,25 @@ def like(bet_id):
         print(e) 
         return {'status':'error'}
 
-
+@app.route('/comment/<bet_id>')
+@login_required
+def comment():
+    return render_template('comment.html', selected='comment')
+        
+@app.route('/comment2', methods = ['POST'])
+@login_required
+def comment2():
+    comment=request.form['comment']
+    try:
+        conn = mysql.connection
+        curr = conn.cursor()
+        user_id=session['user_id']
+        curr.execute("Insert ignore into comments VALUES(%s,%s)", (user_id, bet_id, comment))
+        conn.commit()
+        return {'status':'success'}
+    except Exception as e:
+        print(e) 
+        return {'status':'error'}
 
 
 @app.route( '/logout', methods=['GET'])
