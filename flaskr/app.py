@@ -424,7 +424,9 @@ def comment2(bet_id):
         user_id=session['user_id']
         curr.execute("Insert ignore into comments VALUES(%s,%s,%s)", (user_id, bet_id, comment))
         conn.commit()
-        return {'status':'success'}
+        bets = get_bets()
+        comments = get_comments()
+        return render_template( 'feed.html', bets=bets, comments=comments)
     except Exception as e:
         print(e) 
         return {'status':'error'}
