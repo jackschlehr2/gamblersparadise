@@ -402,7 +402,7 @@ def like(bet_id):
 
 @app.route('/comment/<bet_id>')
 @login_required
-def comment():
+def comment(bet_id):
     return render_template('comment.html', selected='comment')
         
 @app.route('/comment2', methods = ['POST'])
