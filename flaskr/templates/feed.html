@@ -71,15 +71,20 @@
         <div class="post__footer">
            <button onclick="like( this, '/like/{{bet[2]}}')"style="border: none;background:none;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="black" class="bi bi-heart-fill" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-          </svg> <b>{{bet[9]}}</b>
+          </svg> 
+          <b>{{bet[9]}}</b>
           </button>
          
           <span class="material-icons" style="color: grey;">{{bet[1]}}</span>
-        
           <a href="/comment/{{bet[2]}}"><button style="border: none;background:none;"> <img src="https://www.pngfind.com/pngs/m/247-2474217_png-file-svg-comment-icon-transparent-png.png" style="width:50px;height:20px;"> </button> </a>
-
-           
+          
           </div>
+          <h5>Comments:</h5>
+          {% for comment in comments%}
+            {% if bet[2] == comment[1] %}
+              <b>{{comment[3]}}: {{comment[2]}}</b> <br>
+            {% endif %}
+          {% endfor %}
         </div>
 
       

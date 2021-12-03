@@ -39,7 +39,8 @@ def main():
 @login_required
 def feed():
     bets = get_bets()
-    return render_template( 'feed.html', bets=bets)
+    comments = get_comments()
+    return render_template( 'feed.html', bets=bets, comments=comments)
 
 @app.route("/features")
 def features():
@@ -267,6 +268,14 @@ def get_bets2():
     print(data)
     return data
 
+def get_comments():
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT comments.user_id, comments.bet_id, comments.comment, users.user_username FROM comments, users WHERE comments.user_id=users.user_id")
+    data = curr.fetchall()
+    data = list(data)
+    return data
+
 def get_friends(uname):
     conn = mysql.connection
     curr = conn.cursor()
@@ -402,18 +411,18 @@ def like(bet_id):
 
 @app.route('/comment/<bet_id>')
 @login_required
-def comment():
-    return render_template('comment.html', selected='comment')
+def comment(bet_id):
+    return render_template('comment.html', selected='comment', bet_id=bet_id)
         
-@app.route('/comment2', methods = ['POST'])
+@app.route('/comment2/<bet_id>', methods = ['POST'])
 @login_required
-def comment2():
+def comment2(bet_id):
     comment=request.form['comment']
     try:
         conn = mysql.connection
         curr = conn.cursor()
         user_id=session['user_id']
-        curr.execute("Insert ignore into comments VALUES(%s,%s)", (user_id, bet_id, comment))
+        curr.execute("Insert ignore into comments VALUES(%s,%s,%s)", (user_id, bet_id, comment))
         conn.commit()
         return {'status':'success'}
     except Exception as e:
@@ -430,7 +439,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5004, host="0.0.0.0")
+    app.run(port=5003, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
