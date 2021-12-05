@@ -3,9 +3,15 @@
 {% block body %}
 
 <!-- <h1>this will be the main homepage</h1> -->
+<div class="img">
+<img src="https://production.listennotes.com/podcasts/gamblers-paradise-fRwzZUEL_b1-Tczl16baZUJ.1400x1400.jpg" alt="Welcome to Gambler's Paradise!" style="max-width:450px;max-height:400px;height:100%;width:100%" class="center">
+</div>
+<br>
 
-<img src="https://production.listennotes.com/podcasts/gamblers-paradise-fRwzZUEL_b1-Tczl16baZUJ.1400x1400.jpg" alt="Welcome to Gambler's Paradise!" style="max-width:450px;max-height:400px;height:100%;width:100%" class = "center">
-
+<div class="hello">
+  <h2 style="align-self: center;">Hello there</h2> <br>
+  <p>If you're on this website, it's probably because we have something in common. Namely, you have a love for (read: addiction to) gambling. Well, you're in the right place! Welcome to Gambler's Paradise, a place where you can connect with the finest minds in the sports gambling universe and bask in the glory that is degeneracy!</p>
+</div>
 <div class="center">
   <h2>Find friends</h2>
 <table class="center">
@@ -36,6 +42,9 @@
     th{
         padding: .5rem;
     }
+    .img{
+      background-color: white;
+    }
     .center {
       display: flex;
       margin-left: auto;
@@ -43,6 +52,14 @@
       display: flex;
       flex-wrap: nowrap;
       flex-direction: column; 
+      font-family: 'Helvetica Neue';
+    }
+    .hello{
+      display: inline-block;
+      float: left;
+      width: 50%;
+      margin-left: 50px;
+      font-family: 'Helvetica Neue';
     }
     h2{
       align-self: center;
@@ -52,6 +69,7 @@
     }
     table{
       margin: 20px;
+      border: none;
     }
 
 

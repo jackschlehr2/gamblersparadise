@@ -44,6 +44,10 @@
     <!-- tweetbox ends -->
 
     <!-- post starts -->
+    <br>
+    <h2 style="color:#1DA1F2; text-align: center; font-family: 'Helvetica Neue'">My Feed</h2>
+    <hr>
+    <br>
     {% for bet in bets %}
     <div class="post">
       <div class="post__avatar">
@@ -56,10 +60,11 @@
       <div class="post__body">
         <div class="post__header">
           <div class="post__headerText">
-            <h3>{{bet[8]}}</h3>
+            <h3><b>{{bet[8]}}</b> <span style="color: dodgerblue;">&#10003;</span></h3> 
+            <hr>
           </div>
           <div class="post__headerDescription">
-            <h6>{{ bet[11] }} vs. {{ bet[12] }} on {{bet[13]}} </h6>
+            <h7>{{ bet[11] }} vs. {{ bet[12] }} on {{bet[13]}} </h7>
             {% if bet[6] == 1 %}
               <p>{{bet[0]}} on OVER {{bet[3]}} points</p>
             {% else %}
@@ -72,7 +77,7 @@
            <button onclick="like( this, '/like/{{bet[2]}}')"style="border: none;background:none; color:red;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-heart-fill" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
           </svg> 
-          <b>{{bet[9]}}</b>
+          <b>{{bet[9]}}</b> 
           </button>
          
           <span class="material-icons" style="color: grey;">{{bet[1]}}</span>
@@ -80,10 +85,11 @@
           
           </div>
           <br>
-          <h5><u>Comments:</u></h5>
+          <h5>Replies:</h5>
+          <hr>
           {% for comment in comments%}
             {% if bet[2] == comment[1] %}
-              <b>{{comment[3]}}: {{comment[2]}}</b> <br>
+              <b>{{comment[3]}}:</b> {{comment[2]}} <br>
             {% endif %}
           {% endfor %}
         </div>

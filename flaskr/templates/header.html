@@ -8,24 +8,22 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
   </head>
-<header class="d-flex noflex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <ul class="nav col-12 col-md-auto mb-2 justify-content-left mb-md-0 " style="display: flex; flex-wrap: nowrap;">
+<header style = "background-color: floralwhite;"class="d-flex noflex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <ul class="a" style="display: flex; flex-wrap: nowrap; color:whitesmoke;">
       
-      <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
-      <li><a href="/features" class="nav-link px-2 link-dark">Features</a></li>
-      <li style="width: 100%"><a href="/feed" class="nav-link px-2 link-dark">Feed</a></li>
+      <li style="color:dodgerblue;"><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
+      <li style="color:dodgerblue;"><a href="/features" class="nav-link px-2 link-dark">Features</a></li>
+      <li style="width: 100%; color: white;"><a href="/feed" class="nav-link px-2 link-dark">Feed</a></li>
       {% if session.logged_in %}
-        <li><a href="/logout"><button type="button" class="btn btn-outline-primary me-2">Logout</button></a></li>
-        <li><a href="/account"><button type="button" class="btn btn-primary">Account</button></a></li>
+        <li style="color:dodgerblue;"><a href="/logout"><button type="button" class="btn btn-outline-primary me-2">Logout</button></a></li>
+        <li style="color:dodgerblue;"><a href="/account"><button type="button" class="btn btn-primary">Account</button></a></li>
       {% else %}
-        <li><a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a></li>
-        <li><a href="/sign-up" ><button type="button" class="btn btn-primary" style="
-          width: max-content;" >Sign-up</button></a></li>
+        <li style="color:dodgerblue;"><a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a></li>
+        <li><a href="/sign-up" ><button type="button" class="btn btn-primary" style="width: max-content;" >Sign-up</button></a></li>
       {% endif %}
     </ul>
 </header>
-<body id="override" style="
-display: block;">
+<body id="override" style="display: block;">
   {% if message %}
     {% if message["status"] == "error" %}
       <div class="alert alert-danger" role="alert">
@@ -44,3 +42,22 @@ display: block;">
   {% block body %} {% endblock %}
 </body>
 </html>
+
+<style>
+  header{
+    width: 100%;
+  }
+  body {
+    background-color: gainsboro;
+  }
+  ul{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  li{
+    font-family:verdana;
+    display:inline-block;
+    padding: 10px;
+  }
+</style>
