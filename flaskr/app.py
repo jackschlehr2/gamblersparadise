@@ -34,7 +34,7 @@ def main():
     users = get_users()
     return render_template('index.html', users=users)
 
-
+ 
 @app.route("/feed")
 @login_required
 def feed():
@@ -70,7 +70,7 @@ def signUp():
             curr.execute( "SELECT * FROM users WHERE user_id = @@Identity" )
             data = curr.fetchall()
             session['user_id'] = data[0][0]
-            return render_template('account.html',account_name=session['user_name'],  message={"status":"success", "message":"Account Successfully made!"} )
+            return render_template('account.html',account_name=session['user_name'],  message={"status":"success", "message":"Account Successfully made!"}, wins=get_wins(session['user_name']) )
         else:
             return render_template('signup.html', message={"status":"error", "message":"an error was encountered, try again"} )
 
@@ -90,12 +90,14 @@ def username_exists(username):
 def view_profile(username):
     conn = mysql.connection
     curr = conn.cursor()
+    wins=10
     curr.execute("SELECT * FROM users WHERE user_username = %(username)s", {'username': username}) #injection protected
     data = curr.fetchall()
     num_followers=0
     num_following=0
     return render_template('profile.html', account_name=username, \
-            num_followers=num_followers, num_following=num_following, friends=get_friends(username), wins=get_wins(username))
+            num_followers=num_followers, num_following=num_following, friends=get_friends(username),\
+            wins=get_wins(username))
 
 
 @app.route( "/add-friend/<username>", methods=['POST','GET'])
@@ -154,7 +156,7 @@ def login():
                 session['logged_in'] = True
                 session['user_id'] = data[0][0]
                 session['user_name'] = _username
-                return render_template('account.html', message={"status":"success", "message":"Logged In!"})
+                return render_template('account.html', message={"status":"success", "message":"Logged In!"},wins=get_wins(session['user_name']))
             return render_template('login.html', message={"status":"error", "message":"Incorrect password"})
 
 
@@ -193,7 +195,7 @@ def change_password():
             curr.execute("UPDATE users SET user_password = %s where user_id = %s", (new_password_hash, _user_id))
             #curr.execute(query)
             conn.commit()
-            return render_template('account.html', message="Password Updated")
+            return render_template('account.html', message="Password Updated", wins=get_wins(session['user_name']))
         else:
             return render_template('change_password.html', message="Password Not Correct")
     else:
@@ -448,7 +450,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5004, host="0.0.0.0")
+    app.run(port=5002, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
