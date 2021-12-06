@@ -34,9 +34,9 @@
                   <option value ="" selected disabled hidden>Choose League first</option>
                 </select>
             <br>
-            <input class="radio" type="radio" id="over" name="OU" value="over"><label for="over">Over</label>
-            <input class="radio" type="radio" id="under" name="OU" value="under"><label for="under">Under</label>
-                <br>
+            <input class="radio1" type="radio" id="over" name="OU" value="over"><label class="radio1"for="over">Over</label>
+            <input class="radio2" type="radio" id="under" name="OU" value="under"><label class="radio2"for="under">Under</label>
+            <br>
             <button  type=submit id="btnSubmit" class="tweetBox__tweetButton">Submit</button>
         </div>
       </form>
@@ -45,7 +45,9 @@
 
     <!-- post starts -->
     <br>
-    <h2 style="color:#1DA1F2; text-align: center; font-family: 'Helvetica Neue'">My Feed</h2>
+    <div class="feed">
+      <h2 style="color:#1DA1F2; text-align: center; font-family: 'Helvetica Neue'">My Feed</h2>
+    </div>
     <hr>
     <br>
     {% for bet in bets %}
@@ -274,8 +276,15 @@
             padding: 20px;
             flex-direction: column;
           }
-          form input.radio{
-            display: inline;
+          form input.radio1{
+            display: inline-block;
+            margin-left: 20px;
+            float: left;
+          }
+          form input.radio2{
+            display: inline-block;
+            margin-left: 20px;
+            float: right;
           }
           .tweetbox__input input {
             flex: 1;
@@ -303,12 +312,17 @@
             border-radius: 50%;
             height: 40px;
           }
+
+          .feed{
+            background-color: #f8f8ff;
+          }
           
           .post {
             display: flex;
             align-items: flex-start;
             border-bottom: 1px solid var(--twitter-background);
             padding-bottom: 10px;
+            background-color: #f8f8ff;
           }
           
           .post__body img {
