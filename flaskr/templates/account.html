@@ -24,9 +24,9 @@
       Friends: {% for friend in friends %}
       {{ friend[0] }},
       {% endfor %} <br>
-      Wins: {{ wins[0] }}<br>  
-      Losses: <br>
-      W/L Percentage: <br>
+      Wins: {{ wins[0][0] }}<br>  
+      Losses: {{ wins[0][2] }}<br>
+      W/L Percentage: {{ wins[0][1] }}<br>
       <!-- Total Earnings: <br> -->
       </h6>
       <br>
