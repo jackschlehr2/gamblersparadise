@@ -69,11 +69,11 @@
             <hr>
           </div>
           <div class="post__headerDescription">
-            <h7>{{ bet[11] }} vs. {{ bet[12] }} on {{bet[13]}} </h7>
+            <h7>{{ bet[12] }} vs. {{ bet[13] }} on {{bet[14]}} </h7>
             {% if bet[6] == 1 %}
-              <p>{{bet[0]}} on OVER {{bet[3]}} points</p>
+              <p>${{bet[0]}} on OVER {{bet[3]}} points</p>
             {% else %}
-            <p>{{bet[0]}} on UNDER {{bet[3]}} points</p>
+            <p>${{bet[0]}} on UNDER {{bet[3]}} points</p>
             {% endif %}
             <!-- <p>{{bet}}</p> -->
           </div>
@@ -82,7 +82,7 @@
            <button onclick="like( this, '/like/{{bet[2]}}')"style="border: none;background:none; color:red;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red" class="bi bi-heart-fill" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
           </svg> 
-          <b>{{bet[9]}}</b> 
+          <b>{{bet[10]}}</b> 
           </button>
          
           <span class="material-icons" style="color: grey;">{{bet[1]}}</span>

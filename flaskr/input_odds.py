@@ -72,12 +72,6 @@ def main():
         insert_games(mydb, league, games, 'OU' )
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
     main()
 

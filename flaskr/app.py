@@ -95,7 +95,7 @@ def view_profile(username):
     num_followers=0
     num_following=0
     return render_template('profile.html', account_name=username, \
-            num_followers=num_followers, num_following=num_following, friends=get_friends(username))
+            num_followers=num_followers, num_following=num_following, friends=get_friends(username), wins=get_wins(username))
 
 
 @app.route( "/add-friend/<username>", methods=['POST','GET'])
@@ -164,7 +164,7 @@ def login():
 @login_required
 def account():
     uname = session['user_name']
-    return render_template('account.html', account_name=session['user_name'], friends=get_friends(uname))
+    return render_template('account.html', account_name=session['user_name'], friends=get_friends(uname), wins=get_wins(uname))
 
 @app.route( '/change-password', methods=['GET', 'POST'])
 @login_required
@@ -281,7 +281,14 @@ def get_friends(uname):
     curr = conn.cursor()
     curr.execute("SELECT user_username from users,(SELECT friends.friend_id FROM friends, users WHERE friends.user_id = users.user_id AND friends.user_id <> friends.friend_id AND users.user_username =\"" + uname + "\")a WHERE users.user_id=a.friend_id" )
     data = curr.fetchall()
-    data = list(data)
+    print(data)
+    return data
+
+def get_wins(uname):
+    conn = mysql.connection
+    curr = conn.cursor()
+    curr.execute("SELECT sum(win),sum(win)/sum(n) as winpct, sum(n)-sum(win) as losses FROM (select count(*) as n, win from bets where user_username=%s group by win)a where win=1",(uname,))
+    data = curr.fetchall()
     print(data)
     return data
 
