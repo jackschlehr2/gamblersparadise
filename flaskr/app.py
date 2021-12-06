@@ -289,7 +289,7 @@ def get_friends(uname):
 def get_wins(uname):
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("SELECT sum(win),sum(win)/sum(n) as winpct, sum(n)-sum(win) as losses FROM (select count(*) as n, win from bets where user_username=%s group by win)a where win=1",(uname,))
+    curr.execute("SELECT sum(b.n),sum(b.n)/sum(a.n) as winpct, sum(a.n)-sum(b.n) as losses FROM (select count(*) as n, win from bets where user_username=%s AND win=0 OR win=1 group by win)a, (select count(*) as n, win from bets where user_username=%s AND win=1 group by win)b",(uname,uname))
     data = curr.fetchall()
     print(data)
     return data
@@ -450,7 +450,7 @@ def logout():
 
 
 if __name__== "__main__":
-    app.run(port=5002, host="0.0.0.0")
+    app.run(port=5004, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
