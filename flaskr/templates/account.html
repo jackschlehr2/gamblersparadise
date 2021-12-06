@@ -1,6 +1,7 @@
 {% extends "header.html" %}
 
 {% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
   h1 {text-align: center;}
 </style>
@@ -23,11 +24,12 @@
       Friends: {% for friend in friends %}
       {{ friend[0] }},
       {% endfor %} <br>
-      <!--Wins: <br>  
+      Wins: {{ wins[0] }}<br>  
       Losses: <br>
       W/L Percentage: <br>
-      Total Earnings: <br> -->
+      <!-- Total Earnings: <br> -->
       </h6>
+      <br>
     <a href="#"><i style="display: inline-block; float: left;" class="fa fa-dribbble"></i></a>
     <a href="#"><i style="display: inline-block; float: left;" class="fa fa-twitter"></i></a>
     <a href="#"><i style="display: inline-block; float: left;" class="fa fa-linkedin"></i></a>
