@@ -34,9 +34,12 @@
                   <option value ="" selected disabled hidden>Choose League first</option>
                 </select>
             <br>
+            <div>
             <input class="radio1" type="radio" id="over" name="OU" value="over"><label class="radio1"for="over">Over</label>
             <input class="radio2" type="radio" id="under" name="OU" value="under"><label class="radio2"for="under">Under</label>
+            </div>
             <br>
+            
             <button  type=submit id="btnSubmit" class="tweetBox__tweetButton">Submit</button>
         </div>
       </form>
@@ -277,14 +280,10 @@
             flex-direction: column;
           }
           form input.radio1{
-            display: inline-block;
             margin-left: 20px;
-            float: left;
           }
           form input.radio2{
-            display: inline-block;
             margin-left: 20px;
-            float: right;
           }
           .tweetbox__input input {
             flex: 1;
