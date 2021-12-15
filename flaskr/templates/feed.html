@@ -71,9 +71,9 @@
           <div class="post__headerDescription">
             <h7>{{ bet[12] }} vs. {{ bet[13] }} on {{bet[14]}} </h7>
             {% if bet[6] == 1 %}
-              <p>${{bet[0]}} on OVER {{bet[3]}} points</p>
+              <p>${{bet[0]}} on OVER {{bet[-1]}} points</p>
             {% else %}
-            <p>${{bet[0]}} on UNDER {{bet[3]}} points</p>
+            <p>${{bet[0]}} on UNDER {{bet[-1]}} points</p>
             {% endif %}
             <!-- <p>{{bet}}</p> -->
           </div>
