@@ -253,7 +253,7 @@ def get_users():
 # full outer join friends on users.user_id = friends.friend_id 
 # where  friends.user_id=(%s), 
 
-def get_bets(user_id):
+def get_bets():
     conn = mysql.connection
     curr = conn.cursor()
     curr.execute("select bets.*, case when likes.likes is NULL THEN 0 ELSE likes.likes END AS likes from (select bet_id, count(*) as likes from likes group by bet_id) likes right outer join bets on likes.bet_id=bets.bet_id order by submitted_date desc" )
