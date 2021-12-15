@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 import requests
 from datetime import date
+from serpapi import GoogleSearch
 mysql = MySQL()
 
 app = Flask(__name__)
@@ -54,7 +55,11 @@ def signUp():
     else:
         _name = request.form['inputName']
         _email = request.form['inputEmail']
-        _password = request.form['inputPassword']
+        _password = request.form['inputPassword1']
+        _password2 = request.form['inputPassword2']
+        if _password and (_password != _password2 ):
+            return render_template('signup.html', message={"status":"message"
+                ,"message":"passwords don't match" })
         if _name and _email and _password:
             if username_exists(_name):
                 return render_template('signup.html', message={"status":"message"
@@ -147,7 +152,7 @@ def login():
             
             data = curr.fetchall()
             if not data:
-                return json.dumps( {'fail':'fail'})
+                return render_template('login.html', message={"status":"error", "message":"Incorrect username or password"})
             # TODO: case where query returns more than one result
             # refactor to make more robust
             query_password = data[0][2]
@@ -157,7 +162,7 @@ def login():
                 session['user_id'] = data[0][0]
                 session['user_name'] = _username
                 return render_template('account.html', message={"status":"success", "message":"Logged In!"},wins=get_wins(session['user_name']))
-            return render_template('login.html', message={"status":"error", "message":"Incorrect password"})
+            return render_template('login.html', message={"status":"error", "message":"Incorrect username or password"})
 
 
 
@@ -237,7 +242,7 @@ def delete_account():
 def get_users():
     conn = mysql.connection
     curr = conn.cursor()
-    curr.execute("SELECT user_username FROM users limit 10" )
+    curr.execute("SELECT user_username FROM users" )
     data = curr.fetchall()
     print(data)
     return data
@@ -248,7 +253,7 @@ def get_users():
 # full outer join friends on users.user_id = friends.friend_id 
 # where  friends.user_id=(%s), 
 
-def get_bets():
+def get_bets(user_id):
     conn = mysql.connection
     curr = conn.cursor()
     curr.execute("select bets.*, case when likes.likes is NULL THEN 0 ELSE likes.likes END AS likes from (select bet_id, count(*) as likes from likes group by bet_id) likes right outer join bets on likes.bet_id=bets.bet_id order by submitted_date desc" )
@@ -448,9 +453,8 @@ def logout():
     return redirect( url_for( "main", message={"status":"nothing", "message":"Logged Out"} ) )
 
 
-
 if __name__== "__main__":
-    app.run(port=5004, host="0.0.0.0")
+    app.run(port=5002, host="0.0.0.0")
 
 
 # 0 7 * * * 7:00am everyday
